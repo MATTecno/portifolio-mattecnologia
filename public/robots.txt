@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://mattecnologia.dev.br/sitemap.xml
