@@ -115,10 +115,10 @@ export default function Contato() {
         </form>
 
         <div className="mt-6 opacity-80 text-sm flex gap-4">
-          <a href="https://wa.me/55SEUNUMERO?text=Ol%C3%A1%2C%20vim%20pelo%20site%20MATTecnologia" target="_blank" className="hover:opacity-100">WhatsApp</a>
+          <a href="https://wa.me/5531995797235?text=Ol%C3%A1%2C%20vim%20pelo%20site%20MATTecnologia" target="_blank" className="hover:opacity-100">WhatsApp</a>
           <a href="https://linkedin.com/in/seu-usuario" target="_blank" className="hover:opacity-100">LinkedIn</a>
-          <a href="https://github.com/seu-usuario" target="_blank" className="hover:opacity-100">GitHub</a>
-          <a href="mailto:contato@mattecnologia.com" className="hover:opacity-100">E-mail</a>
+          <a href="https://github.com/mattecno" target="_blank" className="hover:opacity-100">GitHub</a>
+          <a href="mailto:marcelos.diogo8@gmail.com" className="hover:opacity-100">E-mail</a>
         </div>
       </div>
     </section>

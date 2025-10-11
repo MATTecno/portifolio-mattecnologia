@@ -35,8 +35,8 @@ const PROJECTS: Project[] = [
       'Serviço que lê caixas específicas, extrai anexos (PDF/CSV), aplica validações e lança dados via API com retentativas e filas. Logs e alertas por webhook.',
   },
   {
-    id: 'pdv-pao-nobre',
-    title: 'PDV Pão Nobre',
+    id: 'pdv',
+    title: 'PDV',
     stack: ['Laravel', 'JWT', 'Docker'],
     cover: '/projects/pdv-pao-nobre.jpg',
     short: 'Ponto de venda com autenticação e emissão de comprovantes.',
