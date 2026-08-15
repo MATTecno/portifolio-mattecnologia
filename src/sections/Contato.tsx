@@ -6,17 +6,16 @@ export default function Contato() {
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle')
   const [errorMsg, setErrorMsg] = useState<string>('')
 
-  const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID as string
-  const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID as string
-  const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY as string
+  const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID
+  const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID
+  const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    setStatus('sending')
     setErrorMsg('')
 
     // Validação simples
-    const formEl = formRef.current!
+    const formEl = e.currentTarget
     const name = (formEl.elements.namedItem('from_name') as HTMLInputElement)?.value?.trim()
     const email = (formEl.elements.namedItem('reply_to') as HTMLInputElement)?.value?.trim()
     const message = (formEl.elements.namedItem('message') as HTMLTextAreaElement)?.value?.trim()
@@ -33,7 +32,18 @@ export default function Contato() {
       setErrorMsg('Preencha nome, e-mail e mensagem.')
       return
     }
+    if (!(formEl.elements.namedItem('reply_to') as HTMLInputElement).validity.valid) {
+      setStatus('error')
+      setErrorMsg('Informe um endereço de e-mail válido.')
+      return
+    }
+    if (!SERVICE_ID || !TEMPLATE_ID || !PUBLIC_KEY) {
+      setStatus('error')
+      setErrorMsg('O formulário ainda não está configurado. Entre em contato pelo WhatsApp ou e-mail.')
+      return
+    }
 
+    setStatus('sending')
     try {
       // Opcional: adicionar o campo "site" para o template
       const siteField = formEl.elements.namedItem('site') as HTMLInputElement | null
@@ -42,7 +52,7 @@ export default function Contato() {
       await emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, formEl, { publicKey: PUBLIC_KEY })
       setStatus('success')
       formEl.reset()
-    } catch (err: any) {
+    } catch (err: unknown) {
       setStatus('error')
       setErrorMsg('Não foi possível enviar. Verifique sua conexão e tente novamente.')
       console.error(err)
@@ -54,7 +64,9 @@ export default function Contato() {
       <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary opacity-20 -z-10" />
 
       <div className="max-w-3xl mx-auto px-6 py-20">
-        <h2 className="text-3xl font-orbitron font-bold mb-6">Pronto para criar algo incrível?</h2>
+        <p className="text-primary text-sm font-semibold uppercase tracking-[0.2em] mb-3">Vamos conversar</p>
+        <h2 className="text-3xl font-orbitron font-bold mb-3">Conte o que você quer tirar do papel</h2>
+        <p className="opacity-75 mb-7">Pode ser uma ideia nova ou uma operação que precisa funcionar melhor.</p>
 
         <form ref={formRef} onSubmit={onSubmit} className="space-y-4" noValidate>
           {/* Honeypot (campo escondido para bots) */}
@@ -115,9 +127,8 @@ export default function Contato() {
         </form>
 
         <div className="mt-6 opacity-80 text-sm flex gap-4">
-          <a href="https://wa.me/5531995797235?text=Ol%C3%A1%2C%20vim%20pelo%20site%20MATTecnologia" target="_blank" className="hover:opacity-100">WhatsApp</a>
-          <a href="https://linkedin.com/in/seu-usuario" target="_blank" className="hover:opacity-100">LinkedIn</a>
-          <a href="https://github.com/mattecno" target="_blank" className="hover:opacity-100">GitHub</a>
+          <a href="https://wa.me/5531995797235?text=Ol%C3%A1%2C%20vim%20pelo%20site%20MATTecnologia" target="_blank" rel="noopener noreferrer" className="hover:opacity-100">WhatsApp</a>
+          <a href="https://github.com/mattecno" target="_blank" rel="noopener noreferrer" className="hover:opacity-100">GitHub</a>
           <a href="mailto:marcelos.diogo8@gmail.com" className="hover:opacity-100">E-mail</a>
         </div>
       </div>

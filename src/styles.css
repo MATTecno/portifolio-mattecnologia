@@ -10,6 +10,29 @@ html {
     scroll-behavior: smooth;
 }
 
+body {
+    min-width: 320px;
+    min-height: 100vh;
+    margin: 0;
+    font-family: Inter, system-ui, sans-serif;
+}
+
+.recruiter-page {
+    color-scheme: light;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+    outline-offset: 3px;
+}
+
+:focus-visible {
+    outline: 2px solid #1E90FF;
+}
+
 .no-scrollbar::-webkit-scrollbar {
     display: none;
 }
@@ -17,4 +40,19 @@ html {
 .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
 }

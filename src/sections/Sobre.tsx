@@ -1,7 +1,7 @@
 export default function Sobre() {
     const stacks = [
-        'PHP', 'Laravel', 'Node.js', 'TypeScript', 'Flutter',
-        'PostgreSQL', 'Docker', 'APIs', 'Integrações', 'Automação'
+        'PHP', 'Laravel', 'TypeScript', 'C# / .NET', 'React',
+        'Supabase', 'PostgreSQL', 'Docker', 'APIs', 'Automação'
     ]
 
     return (
@@ -18,10 +18,10 @@ export default function Sobre() {
             <div>
                 <h2 className="text-3xl font-orbitron font-bold mb-4">Sobre mim</h2>
                 <p className="opacity-80 leading-relaxed">
-                    Sou <strong>Marcelo Diogo</strong>, desenvolvedor fullstack que transforma ideias em
-                    <span className="text-primary"> soluções digitais</span>. Atuo com web e mobile,
-                    crio e integro APIs e construo <em>sistemas sob medida</em> com foco em
-                    performance, segurança e escalabilidade.
+                    Sou <strong>Marcelo Diogo</strong>, desenvolvedor fullstack focado em transformar necessidades de
+                    negócio em <span className="text-primary">produtos digitais que funcionam na prática</span>. Atuo do
+                    entendimento da rotina ao desenvolvimento e à entrega, construindo SaaS, sistemas web, aplicações
+                    desktop e integrações sob medida.
                 </p>
 
                 {/* Chips de stack */}
@@ -33,15 +33,7 @@ export default function Sobre() {
                     ))}
                 </div>
 
-                {/* CTA extra: baixar CV */}
                 <div className="mt-8 flex flex-wrap gap-4">
-                    <a
-                        href="/cv-marcelo-diogo.pdf"
-                        download
-                        className="px-5 py-3 border border-white/15 rounded-mdplus hover:bg-white/5 transition"
-                    >
-                        Baixar CV (PDF)
-                    </a>
                     <a
                         href="#contato"
                         className="px-5 py-3 bg-primary rounded-mdplus shadow-glow font-medium hover:brightness-110 transition"
