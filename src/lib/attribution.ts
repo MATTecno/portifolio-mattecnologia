@@ -56,7 +56,7 @@ function storeSource(storage: AttributionStorage | null | undefined, source: str
   try {
     storage?.setItem(ATTRIBUTION_STORAGE_KEY, source)
   } catch {
-    // A atribuição continua válida nesta página quando o armazenamento está indisponível.
+    return
   }
 }
 
@@ -93,7 +93,7 @@ export function captureBrowserAttribution(): string {
   try {
     storage = window.sessionStorage
   } catch {
-    // Alguns navegadores bloqueiam o acesso ao sessionStorage por configuração de privacidade.
+    storage = null
   }
 
   return resolveAttribution({

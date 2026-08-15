@@ -150,7 +150,7 @@ function capture(event: AnalyticsEvent): void {
   try {
     posthogClient.capture(event.name, event.properties)
   } catch {
-    // Analytics nunca deve interferir na ação solicitada pelo visitante.
+    return
   }
 }
 
@@ -252,7 +252,7 @@ export function getProjectDestination(href: string): Exclude<ProjectDestination,
     if (hostname === 'github.com') return 'github'
     if (hostname === 'npmjs.com') return 'npm'
   } catch {
-    // Links desconhecidos são tratados como destino ao vivo.
+    return 'live'
   }
   return 'live'
 }

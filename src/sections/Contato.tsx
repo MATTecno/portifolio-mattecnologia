@@ -18,15 +18,13 @@ export default function Contato() {
     e.preventDefault()
     setErrorMsg('')
 
-    // Validação simples
     const formEl = e.currentTarget
     const name = (formEl.elements.namedItem('from_name') as HTMLInputElement)?.value?.trim()
     const email = (formEl.elements.namedItem('reply_to') as HTMLInputElement)?.value?.trim()
     const message = (formEl.elements.namedItem('message') as HTMLTextAreaElement)?.value?.trim()
-    const bot = (formEl.elements.namedItem('website') as HTMLInputElement)?.value?.trim() // honeypot
+    const honeypot = (formEl.elements.namedItem('website') as HTMLInputElement)?.value?.trim()
 
-    if (bot) {
-      // Honeypot preenchido => provavelmente bot
+    if (honeypot) {
       setStatus('error')
       setErrorMsg('Falha no envio. Tente novamente.')
       return
@@ -50,7 +48,6 @@ export default function Contato() {
     setStatus('sending')
     try {
       const { default: emailjs } = await import('@emailjs/browser')
-      // Opcional: adicionar o campo "site" para o template
       const siteField = formEl.elements.namedItem('site') as HTMLInputElement | null
       if (siteField) siteField.value = window.location.origin
 
@@ -75,7 +72,6 @@ export default function Contato() {
         <p className="opacity-75 mb-7">Pode ser uma ideia nova ou uma operação que precisa funcionar melhor.</p>
 
         <form ref={formRef} onSubmit={onSubmit} className="space-y-4" noValidate>
-          {/* Honeypot (campo escondido para bots) */}
           <input type="text" name="website" className="hidden" tabIndex={-1} autoComplete="off" />
 
           <div>
@@ -114,7 +110,6 @@ export default function Contato() {
             />
           </div>
 
-          {/* Campo extra "site" (preenchido no submit) */}
           <input type="hidden" name="site" />
 
           <button
@@ -125,7 +120,6 @@ export default function Contato() {
             {status === 'sending' ? 'Enviando…' : 'Enviar mensagem'}
           </button>
 
-          {/* Mensagens de status (acessíveis) */}
           <p role="status" aria-live="polite" className="text-sm mt-2">
             {status === 'success' && 'Mensagem enviada! O retorno será feito em breve.'}
             {status === 'error' && (errorMsg || 'Não foi possível enviar.')}

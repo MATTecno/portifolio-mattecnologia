@@ -15,7 +15,6 @@ export default function Sobre() {
                     um <span className="text-primary">produto digital sustentável e pronto para evoluir</span>.
                 </p>
 
-                {/* Chips de stack */}
                 <div className="mt-6 flex flex-wrap gap-3 text-sm">
                     {stacks.map((tag) => (
                         <span key={tag} className="px-3 py-1 rounded-mdplus border border-white/10 bg-white/5">
