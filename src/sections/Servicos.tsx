@@ -27,7 +27,7 @@ export default function Servicos() {
       <div className="max-w-3xl mb-9">
         <p className="text-primary text-sm font-semibold uppercase tracking-[0.2em] mb-3">Serviços</p>
         <h2 className="text-3xl md:text-4xl font-orbitron font-bold">Tecnologia aplicada ao que precisa funcionar</h2>
-        <p className="opacity-75 mt-4">Escolho a arquitetura a partir do produto e da operação, não o contrário.</p>
+        <p className="opacity-75 mt-4">A arquitetura é definida a partir do produto e da operação, não o contrário.</p>
       </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">

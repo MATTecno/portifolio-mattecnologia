@@ -121,7 +121,7 @@ export default function Contato() {
 
           {/* Mensagens de status (acessíveis) */}
           <p role="status" aria-live="polite" className="text-sm mt-2">
-            {status === 'success' && 'Mensagem enviada! Vou te responder em breve.'}
+            {status === 'success' && 'Mensagem enviada! O retorno será feito em breve.'}
             {status === 'error' && (errorMsg || 'Não foi possível enviar.')}
           </p>
         </form>

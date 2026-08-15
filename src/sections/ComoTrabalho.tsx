@@ -2,22 +2,22 @@ const STEPS = [
   {
     number: '01',
     title: 'Descoberta',
-    text: 'Entendo o problema, quem usa a solução e o que realmente precisa melhorar na rotina.',
+    text: 'Mapeamento do problema, de quem usa a solução e do que realmente precisa melhorar na rotina.',
   },
   {
     number: '02',
     title: 'Escopo',
-    text: 'Transformo a ideia em prioridades, fluxos e uma primeira entrega clara para todos.',
+    text: 'A ideia se transforma em prioridades, fluxos e uma primeira entrega clara para todos.',
   },
   {
     number: '03',
     title: 'Desenvolvimento',
-    text: 'Construo em ciclos curtos, validando as partes importantes antes de avançar.',
+    text: 'O desenvolvimento acontece em ciclos curtos, validando as partes importantes antes de avançar.',
   },
   {
     number: '04',
     title: 'Entrega e evolução',
-    text: 'Coloco o produto em uso, documento o necessário e preparo os próximos passos.',
+    text: 'O produto entra em uso com a documentação necessária e uma base preparada para os próximos passos.',
   },
 ]
 

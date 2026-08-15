@@ -8,7 +8,6 @@ const NAV_LINKS = [
   ['Como trabalho', '#processo'],
   ['Estimativa', '#estimativa'],
   ['Contato', '#contato'],
-  ['Para recrutadores', '/recrutadores/'],
 ] as const
 
 export default function Hero() {
@@ -87,27 +86,14 @@ export default function Hero() {
         <div className="absolute -bottom-24 -left-24 w-[520px] h-[520px] bg-secondary/30 blur-[120px] rounded-full" />
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 pt-32 pb-20 md:pt-40 md:pb-28 grid md:grid-cols-[0.9fr_1.1fr] gap-10 items-center">
-        <div className="order-2 md:order-1">
-          <img
-            src="/marcelo.jpeg"
-            alt="Marcelo Diogo"
-            className="w-full aspect-[4/5] object-cover rounded-2xl ring-1 ring-white/15 shadow-glow"
-            loading="eager"
-            fetchPriority="high"
-            width={800}
-            height={1000}
-            sizes="(max-width: 768px) 100vw, 45vw"
-          />
-        </div>
-
-        <div className="order-1 md:order-2">
-          <p className="text-primary text-sm font-semibold uppercase tracking-[0.2em] mb-4">Produtos digitais e sistemas sob medida</p>
+      <div className="max-w-6xl mx-auto grid items-center gap-10 px-6 pb-20 pt-32 md:pb-28 md:pt-40 lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)]">
+        <div>
+          <p className="text-primary text-sm font-semibold uppercase tracking-[0.2em] mb-4">Desenvolvimento de software para empresas</p>
           <h1 className="font-orbitron text-4xl md:text-5xl font-extrabold leading-tight">
             Sistemas sob medida para transformar <span className="text-primary">operações e ideias</span> em produtos digitais.
           </h1>
           <p className="mt-5 text-lg opacity-80 max-w-prose leading-relaxed">
-            Desenvolvo SaaS, aplicações web e mobile, soluções desktop e integrações com foco na rotina real de cada negócio.
+            A MATTecnologia desenvolve SaaS, aplicações web e mobile, soluções desktop e integrações com foco na rotina real de cada negócio.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-4">
@@ -127,7 +113,7 @@ export default function Hero() {
 
           <div className="mt-5 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 ring-1 ring-white/10">
             <span className="size-2 rounded-full bg-green-400 shadow-[0_0_10px_rgba(74,222,128,.7)]" aria-hidden="true" />
-            <span className="text-sm opacity-90"><strong>Aberto</strong> para novos projetos</span>
+            <span className="text-sm opacity-90"><strong>Agenda aberta</strong> para novos projetos</span>
           </div>
 
           <div className="mt-7 flex flex-wrap items-center gap-2.5">
@@ -161,6 +147,28 @@ export default function Hero() {
             </a>
           </div>
         </div>
+
+        <aside className="rounded-2xl border border-white/10 bg-white/[0.045] p-6 shadow-2xl backdrop-blur-sm md:p-8">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Entrega de ponta a ponta</p>
+          <h2 className="mt-3 text-2xl font-orbitron font-bold">Software pensado para a operação real</h2>
+          <p className="mt-4 text-sm leading-relaxed opacity-70">
+            Escopo claro, desenvolvimento próximo e uma base técnica preparada para evoluir sem depender de soluções improvisadas.
+          </p>
+
+          <ul className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+            {['SaaS e sistemas web', 'Aplicações desktop', 'APIs e automações', 'MVPs e evolução de produtos'].map((service) => (
+              <li key={service} className="flex items-center gap-3 rounded-xl border border-white/10 bg-background/55 px-4 py-3 text-sm font-semibold">
+                <span className="size-2 shrink-0 rounded-full bg-primary shadow-[0_0_10px_rgba(0,153,255,.65)]" aria-hidden="true" />
+                {service}
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-7 flex flex-wrap items-center justify-between gap-2 border-t border-white/10 pt-5 text-xs uppercase tracking-[0.12em] opacity-60">
+            <span>Projetos sob medida</span>
+            <span>Web · Desktop · Mobile</span>
+          </div>
+        </aside>
       </div>
     </header>
   )

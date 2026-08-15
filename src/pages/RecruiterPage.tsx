@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Analytics } from '@vercel/analytics/react'
 import {
-  FaArrowLeft,
   FaBars,
   FaBriefcase,
   FaCode,
@@ -49,8 +48,8 @@ export default function RecruiterPage() {
       <header id="top" className="border-b border-slate-200 bg-white">
         <div className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/95 backdrop-blur">
           <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 md:px-6" aria-label="Recrutadores">
-            <a href="/" className="font-orbitron text-lg font-bold tracking-wide text-slate-950" aria-label="Voltar para MATTecnologia">
-              <span>MAT</span><span className="text-blue-600">Tecnologia</span>
+            <a href="#top" className="text-base font-bold tracking-tight text-slate-950" aria-label="Ir para o início">
+              Marcelo Diogo Teixeira
             </a>
 
             <div className="hidden items-center gap-5 text-sm text-slate-600 lg:flex">
@@ -149,7 +148,16 @@ export default function RecruiterPage() {
           </div>
 
           <aside className="rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-sm">
-            <h2 className="font-bold text-slate-950">Disponibilidade</h2>
+            <img
+              src="/marcelo-profissional.webp"
+              alt="Marcelo Diogo Teixeira"
+              className="mx-auto aspect-square w-full max-w-[210px] rounded-2xl object-cover ring-1 ring-slate-200"
+              loading="eager"
+              fetchPriority="high"
+              width={900}
+              height={900}
+            />
+            <h2 className="mt-6 border-t border-slate-200 pt-5 font-bold text-slate-950">Disponibilidade</h2>
             <div className="mt-4 flex items-start gap-3 text-sm text-slate-600">
               <FaMapMarkerAlt className="mt-0.5 shrink-0 text-blue-700" aria-hidden="true" />
               <span>{RECRUITER_PROFILE.location}</span>
@@ -404,12 +412,8 @@ export default function RecruiterPage() {
       </main>
 
       <footer className="border-t border-slate-800 bg-slate-950 text-slate-400">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-5 py-7 text-sm md:flex-row md:px-6">
+        <div className="mx-auto max-w-6xl px-5 py-7 text-center text-sm md:px-6">
           <p>© {new Date().getFullYear()} Marcelo Diogo Teixeira</p>
-          <a href="/" className="inline-flex items-center gap-2 font-semibold text-slate-300 transition hover:text-white">
-            <FaArrowLeft aria-hidden="true" />
-            Voltar ao portfólio comercial
-          </a>
         </div>
       </footer>
 
