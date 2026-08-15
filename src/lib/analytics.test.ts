@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import type { CaptureResult } from 'posthog-js'
 import {
   buildAnalyticsEvent,
+  createPostHogConfig,
   getProjectDestination,
   hasAnalyticsConfig,
   isDoNotTrackEnabled,
@@ -11,6 +12,37 @@ import {
 const page = { pageType: 'recruiter' } as const
 
 describe('eventos públicos de analytics', () => {
+  it('inicializa o provedor em modo cookieless e somente com captura manual', () => {
+    const config = createPostHogConfig('https://us.i.posthog.com')
+
+    expect(config).toMatchObject({
+      api_host: 'https://us.i.posthog.com',
+      cookieless_mode: 'always',
+      persistence: 'memory',
+      person_profiles: 'never',
+      respect_dnt: true,
+      autocapture: false,
+      rageclick: false,
+      capture_pageview: false,
+      capture_pageleave: false,
+      capture_performance: false,
+      capture_heatmaps: false,
+      capture_dead_clicks: false,
+      capture_exceptions: false,
+      disable_session_recording: true,
+      disable_surveys: true,
+      disable_surveys_automatic_display: true,
+      disable_product_tours: true,
+      disable_conversations: true,
+      disable_web_experiments: true,
+      disable_external_dependency_loading: true,
+      advanced_disable_flags: true,
+      save_referrer: false,
+      save_campaign_params: false,
+      disable_scroll_properties: true,
+    })
+  })
+
   it('gera pageview somente com o contexto público', () => {
     expect(buildAnalyticsEvent('page_viewed', {}, page, 'linkedin', '/recrutadores/')).toEqual({
       name: 'page_viewed',

@@ -1,4 +1,5 @@
 import type { CaptureResult } from 'posthog-js'
+import type { PostHogConfig } from 'posthog-js/dist/module.slim'
 import { captureBrowserAttribution } from './attribution'
 
 export type PageType = 'commercial' | 'recruiter' | 'case' | 'privacy'
@@ -93,6 +94,38 @@ export function sanitizeProviderEvent(event: CaptureResult | null): CaptureResul
   return { ...event, properties }
 }
 
+export function createPostHogConfig(apiHost: string): Partial<PostHogConfig> {
+  return {
+    api_host: apiHost,
+    defaults: '2026-05-30',
+    cookieless_mode: 'always',
+    persistence: 'memory',
+    person_profiles: 'never',
+    respect_dnt: true,
+    autocapture: false,
+    rageclick: false,
+    capture_pageview: false,
+    capture_pageleave: false,
+    capture_performance: false,
+    capture_heatmaps: false,
+    capture_dead_clicks: false,
+    capture_exceptions: false,
+    disable_session_recording: true,
+    disable_surveys: true,
+    disable_surveys_automatic_display: true,
+    disable_product_tours: true,
+    disable_conversations: true,
+    disable_web_experiments: true,
+    disable_external_dependency_loading: true,
+    advanced_disable_flags: true,
+    save_referrer: false,
+    save_campaign_params: false,
+    disable_scroll_properties: true,
+    property_denylist: [...PRIVATE_PROVIDER_PROPERTIES],
+    before_send: sanitizeProviderEvent,
+  }
+}
+
 export function isDoNotTrackEnabled(navigatorLike: Pick<Navigator, 'doNotTrack'> = navigator): boolean {
   return navigatorLike.doNotTrack === '1' || navigatorLike.doNotTrack === 'yes'
 }
@@ -129,17 +162,7 @@ function track<TName extends EventName>(name: TName, details: EventDetails[TName
 async function loadPostHog(projectKey: string, apiHost: string): Promise<void> {
   try {
     const { default: posthog } = await import('posthog-js/dist/module.slim')
-    posthog.init(projectKey, {
-      api_host: apiHost,
-      defaults: '2026-05-30',
-      capture_exceptions: {
-        capture_unhandled_errors: true,
-        capture_unhandled_rejections: true,
-        capture_console_errors: false,
-      },
-      property_denylist: [...PRIVATE_PROVIDER_PROPERTIES],
-      before_send: sanitizeProviderEvent,
-    })
+    posthog.init(projectKey, createPostHogConfig(apiHost))
 
     posthogClient = posthog
     const pendingEvents = queue
