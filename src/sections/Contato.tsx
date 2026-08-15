@@ -1,9 +1,20 @@
 import { useRef, useState } from 'react'
+import { FaCheckCircle, FaExclamationCircle, FaPaperPlane, FaSpinner } from 'react-icons/fa'
 import {
   trackContact,
   trackContactFormSubmitted,
   trackProfile,
 } from '../lib/analytics'
+
+function getSendErrorMessage(error: unknown): string {
+  if (error && typeof error === 'object' && 'text' in error && typeof error.text === 'string') {
+    if (/invalid grant|reconnect/i.test(error.text)) {
+      return 'O envio pelo formulário está temporariamente indisponível. Fale comigo pelo WhatsApp ou e-mail.'
+    }
+  }
+
+  return 'Não foi possível enviar agora. Verifique sua conexão ou use um dos canais alternativos.'
+}
 
 export default function Contato() {
   const formRef = useRef<HTMLFormElement>(null)
@@ -57,7 +68,7 @@ export default function Contato() {
       formEl.reset()
     } catch (err: unknown) {
       setStatus('error')
-      setErrorMsg('Não foi possível enviar. Verifique sua conexão e tente novamente.')
+      setErrorMsg(getSendErrorMessage(err))
       console.error(err)
     }
   }
@@ -71,7 +82,18 @@ export default function Contato() {
         <h2 className="text-3xl font-orbitron font-bold mb-3">Conte o que você quer tirar do papel</h2>
         <p className="opacity-75 mb-7">Pode ser uma ideia nova ou uma operação que precisa funcionar melhor.</p>
 
-        <form ref={formRef} onSubmit={onSubmit} className="space-y-4" noValidate>
+        <form
+          ref={formRef}
+          onSubmit={onSubmit}
+          onChange={() => {
+            if (status !== 'idle' && status !== 'sending') {
+              setStatus('idle')
+              setErrorMsg('')
+            }
+          }}
+          className="space-y-4"
+          noValidate
+        >
           <input type="text" name="website" className="hidden" tabIndex={-1} autoComplete="off" />
 
           <div>
@@ -113,17 +135,98 @@ export default function Contato() {
           <input type="hidden" name="site" />
 
           <button
-            className="px-6 py-3 bg-primary rounded-mdplus shadow-glow font-medium disabled:opacity-60"
+            type="submit"
+            className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-mdplus bg-primary px-6 py-3 font-semibold shadow-glow transition hover:brightness-110 disabled:cursor-wait disabled:opacity-70 sm:w-auto"
             disabled={status === 'sending'}
             aria-busy={status === 'sending'}
           >
-            {status === 'sending' ? 'Enviando…' : 'Enviar mensagem'}
+            {status === 'sending' ? (
+              <>
+                <FaSpinner className="animate-spin" aria-hidden="true" />
+                Enviando mensagem…
+              </>
+            ) : (
+              <>
+                <FaPaperPlane aria-hidden="true" />
+                Enviar mensagem
+              </>
+            )}
           </button>
 
-          <p role="status" aria-live="polite" className="text-sm mt-2">
-            {status === 'success' && 'Mensagem enviada! O retorno será feito em breve.'}
-            {status === 'error' && (errorMsg || 'Não foi possível enviar.')}
-          </p>
+          {status !== 'idle' && (
+            <div
+              id="contact-feedback"
+              role={status === 'error' ? 'alert' : 'status'}
+              aria-live={status === 'error' ? 'assertive' : 'polite'}
+              aria-atomic="true"
+              className={`rounded-xl border p-4 shadow-lg ${
+                status === 'success'
+                  ? 'border-emerald-400/40 bg-emerald-400/10 text-emerald-50'
+                  : status === 'error'
+                    ? 'border-red-400/40 bg-red-400/10 text-red-50'
+                    : 'border-primary/40 bg-primary/10 text-white'
+              }`}
+            >
+              <div className="flex items-start gap-3">
+                <span
+                  className={`mt-0.5 grid size-9 shrink-0 place-items-center rounded-full ${
+                    status === 'success'
+                      ? 'bg-emerald-400/20 text-emerald-300'
+                      : status === 'error'
+                        ? 'bg-red-400/20 text-red-300'
+                        : 'bg-primary/20 text-primary'
+                  }`}
+                  aria-hidden="true"
+                >
+                  {status === 'success' ? (
+                    <FaCheckCircle />
+                  ) : status === 'error' ? (
+                    <FaExclamationCircle />
+                  ) : (
+                    <FaSpinner className="animate-spin" />
+                  )}
+                </span>
+
+                <div>
+                  <p className="font-semibold">
+                    {status === 'success'
+                      ? 'Mensagem enviada com sucesso!'
+                      : status === 'error'
+                        ? 'Não foi possível enviar'
+                        : 'Enviando sua mensagem'}
+                  </p>
+                  <p className="mt-1 text-sm leading-relaxed opacity-85">
+                    {status === 'success'
+                      ? 'Recebi seus dados e responderei pelo e-mail informado assim que possível.'
+                      : status === 'error'
+                        ? errorMsg || 'Tente novamente ou use um dos canais alternativos.'
+                        : 'Aguarde alguns segundos enquanto concluo o envio.'}
+                  </p>
+                </div>
+              </div>
+
+              {status === 'error' && (
+                <div className="mt-4 flex flex-wrap gap-3 border-t border-red-200/15 pt-3 text-sm font-semibold">
+                  <a
+                    href="https://wa.me/5531995797235?text=Ol%C3%A1%2C%20tentei%20enviar%20uma%20mensagem%20pelo%20site"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rounded-md bg-red-100/10 px-3 py-2 text-red-50 transition hover:bg-red-100/20"
+                    onClick={() => trackContact('whatsapp', 'commercial_contact_error')}
+                  >
+                    Falar pelo WhatsApp
+                  </a>
+                  <a
+                    href="mailto:marcelos.diogo8@gmail.com"
+                    className="rounded-md bg-red-100/10 px-3 py-2 text-red-50 transition hover:bg-red-100/20"
+                    onClick={() => trackContact('email', 'commercial_contact_error')}
+                  >
+                    Enviar e-mail
+                  </a>
+                </div>
+              )}
+            </div>
+          )}
         </form>
 
         <div className="mt-6 opacity-80 text-sm flex gap-4">
