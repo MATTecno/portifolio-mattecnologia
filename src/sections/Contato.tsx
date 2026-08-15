@@ -1,4 +1,9 @@
 import { useRef, useState } from 'react'
+import {
+  trackContact,
+  trackContactFormSubmitted,
+  trackProfile,
+} from '../lib/analytics'
 
 export default function Contato() {
   const formRef = useRef<HTMLFormElement>(null)
@@ -50,6 +55,7 @@ export default function Contato() {
       if (siteField) siteField.value = window.location.origin
 
       await emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, formEl, { publicKey: PUBLIC_KEY })
+      trackContactFormSubmitted('commercial_contact_form')
       setStatus('success')
       formEl.reset()
     } catch (err: unknown) {
@@ -127,9 +133,25 @@ export default function Contato() {
         </form>
 
         <div className="mt-6 opacity-80 text-sm flex gap-4">
-          <a href="https://wa.me/5531995797235?text=Ol%C3%A1%2C%20vim%20pelo%20site%20MATTecnologia" target="_blank" rel="noopener noreferrer" className="hover:opacity-100">WhatsApp</a>
-          <a href="https://github.com/mattecno" target="_blank" rel="noopener noreferrer" className="hover:opacity-100">GitHub</a>
-          <a href="mailto:marcelos.diogo8@gmail.com" className="hover:opacity-100">E-mail</a>
+          <a
+            href="https://wa.me/5531995797235?text=Ol%C3%A1%2C%20vim%20pelo%20site%20MATTecnologia"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:opacity-100"
+            onClick={() => trackContact('whatsapp', 'commercial_contact')}
+          >WhatsApp</a>
+          <a
+            href="https://github.com/mattecno"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:opacity-100"
+            onClick={() => trackProfile('github', 'commercial_contact')}
+          >GitHub</a>
+          <a
+            href="mailto:marcelos.diogo8@gmail.com"
+            className="hover:opacity-100"
+            onClick={() => trackContact('email', 'commercial_contact')}
+          >E-mail</a>
         </div>
       </div>
     </section>

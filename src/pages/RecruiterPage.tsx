@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { Analytics } from '@vercel/analytics/react'
 import {
   FaBars,
   FaBriefcase,
@@ -18,9 +17,15 @@ import {
   RECRUITER_PROFILE,
   SECONDARY_RECRUITER_PROJECTS,
 } from '../data/recruiter'
+import {
+  getProjectDestination,
+  trackContact,
+  trackProfile,
+  trackProject,
+  trackResumeDownload,
+} from '../lib/analytics'
 
 const RESUME_PATH = '/Marcelo-Diogo-Teixeira-Curriculo.pdf'
-const IS_LOCAL_PREVIEW = ['localhost', '127.0.0.1'].includes(window.location.hostname)
 
 const NAVIGATION = [
   ['Resumo', '#resumo'],
@@ -62,6 +67,7 @@ export default function RecruiterPage() {
               <a
                 href={RESUME_PATH}
                 download
+                onClick={() => trackResumeDownload('recruiter_header')}
                 className="inline-flex items-center gap-2 rounded-lg bg-slate-950 px-4 py-2 font-semibold text-white transition hover:bg-blue-700"
               >
                 <FaDownload aria-hidden="true" />
@@ -97,7 +103,10 @@ export default function RecruiterPage() {
                 <a
                   href={RESUME_PATH}
                   download
-                  onClick={() => setMenuOpen(false)}
+                  onClick={() => {
+                    trackResumeDownload('recruiter_mobile_menu')
+                    setMenuOpen(false)
+                  }}
                   className="mt-3 inline-flex items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 py-3 text-sm font-semibold text-white"
                 >
                   <FaDownload aria-hidden="true" />
@@ -124,6 +133,7 @@ export default function RecruiterPage() {
               <a
                 href={RESUME_PATH}
                 download
+                onClick={() => trackResumeDownload('recruiter_hero')}
                 className="inline-flex items-center gap-2 rounded-lg bg-blue-700 px-5 py-3 font-semibold text-white shadow-lg shadow-blue-700/15 transition hover:bg-blue-800"
               >
                 <FaDownload aria-hidden="true" />
@@ -133,6 +143,7 @@ export default function RecruiterPage() {
                 href={RECRUITER_PROFILE.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackContact('linkedin', 'recruiter_hero')}
                 className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-800 transition hover:border-blue-400 hover:text-blue-700"
               >
                 <FaLinkedin aria-hidden="true" />
@@ -140,6 +151,7 @@ export default function RecruiterPage() {
               </a>
               <a
                 href={`mailto:${RECRUITER_PROFILE.email}?subject=Oportunidade%20profissional%20para%20Marcelo%20Diogo`}
+                onClick={() => trackContact('email', 'recruiter_hero')}
                 className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-800 transition hover:border-blue-400 hover:text-blue-700"
               >
                 <FaEnvelope aria-hidden="true" />
@@ -298,6 +310,7 @@ export default function RecruiterPage() {
                         {project.casePath && (
                           <a
                             href={project.casePath}
+                            onClick={() => trackProject(project.id, 'case', 'recruiter_projects')}
                             className="inline-flex items-center gap-2 rounded-lg bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
                           >
                             Ver estudo de caso
@@ -310,6 +323,11 @@ export default function RecruiterPage() {
                             href={link.href}
                             target="_blank"
                             rel="noopener noreferrer"
+                            onClick={() => trackProject(
+                              project.id,
+                              getProjectDestination(link.href),
+                              'recruiter_projects',
+                            )}
                             className="inline-flex items-center gap-2 rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-800 transition hover:border-blue-500 hover:text-blue-700"
                           >
                             {link.label}
@@ -408,6 +426,7 @@ export default function RecruiterPage() {
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <a
                 href={`mailto:${RECRUITER_PROFILE.email}?subject=Oportunidade%20profissional%20para%20Marcelo%20Diogo`}
+                onClick={() => trackContact('email', 'recruiter_contact')}
                 className="inline-flex max-w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-500"
               >
                 <FaEnvelope aria-hidden="true" />
@@ -417,6 +436,7 @@ export default function RecruiterPage() {
                 href={RECRUITER_PROFILE.github}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackProfile('github', 'recruiter_contact')}
                 className="inline-flex items-center gap-2 rounded-lg border border-slate-600 px-5 py-3 font-semibold transition hover:border-blue-400 hover:text-blue-300"
               >
                 <FaGithub aria-hidden="true" />
@@ -430,10 +450,11 @@ export default function RecruiterPage() {
       <footer className="border-t border-slate-800 bg-slate-950 text-slate-400">
         <div className="mx-auto max-w-6xl px-5 py-7 text-center text-sm md:px-6">
           <p>© {new Date().getFullYear()} Marcelo Diogo Teixeira</p>
+          <a href="/privacidade/" className="mt-2 inline-block underline-offset-4 hover:underline focus:underline">
+            Privacidade
+          </a>
         </div>
       </footer>
-
-      {!IS_LOCAL_PREVIEW && <Analytics />}
     </div>
   )
 }

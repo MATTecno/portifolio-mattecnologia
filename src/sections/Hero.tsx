@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { FaBars, FaGithub, FaTimes, FaWhatsapp } from 'react-icons/fa'
+import { trackContact, trackProfile } from '../lib/analytics'
 
 const NAV_LINKS = [
   ['Sobre', '#sobre'],
@@ -130,6 +131,7 @@ export default function Hero() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="GitHub"
+              onClick={() => trackProfile('github', 'commercial_hero')}
               className="opacity-75 hover:opacity-100 transition"
               title="GitHub"
             >
@@ -140,6 +142,7 @@ export default function Hero() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="WhatsApp"
+              onClick={() => trackContact('whatsapp', 'commercial_hero')}
               className="opacity-75 hover:opacity-100 transition"
               title="WhatsApp"
             >

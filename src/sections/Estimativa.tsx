@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { FaEnvelope, FaWhatsapp } from 'react-icons/fa'
+import { trackContact } from '../lib/analytics'
 import {
   calculateEstimate,
   DEFAULT_ESTIMATE_INPUT,
@@ -169,6 +170,7 @@ export default function Estimativa() {
               href={whatsappHref}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackContact('whatsapp', 'commercial_estimate')}
               className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-primary rounded-mdplus shadow-glow font-medium hover:brightness-110 transition"
             >
               <FaWhatsapp aria-hidden="true" />
@@ -176,6 +178,7 @@ export default function Estimativa() {
             </a>
             <a
               href={emailHref}
+              onClick={() => trackContact('email', 'commercial_estimate')}
               className="flex items-center justify-center gap-2 w-full px-4 py-3 border border-white/15 rounded-mdplus hover:bg-white/5 transition"
             >
               <FaEnvelope aria-hidden="true" />

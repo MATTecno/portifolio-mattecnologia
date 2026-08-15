@@ -7,6 +7,7 @@ import {
   isCaseStudyProject,
   type SupportingProject,
 } from '../data/projects'
+import { getProjectDestination, trackProject } from '../lib/analytics'
 
 export default function Projetos() {
   const [open, setOpen] = useState<SupportingProject | null>(null)
@@ -51,6 +52,7 @@ export default function Projetos() {
           >
             <a
               href={getProjectCasePath(project)}
+              onClick={() => trackProject(project.id, 'case', 'commercial_projects_image')}
               aria-label={`Ver case completo de ${project.title}`}
               className={`group relative z-10 block aspect-video overflow-hidden bg-[#0b0b0f] text-left lg:aspect-auto lg:min-h-full ${
                 index % 2 === 1 ? 'lg:order-2' : ''
@@ -114,6 +116,11 @@ export default function Projetos() {
                       href={link.href}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={() => trackProject(
+                        project.id,
+                        getProjectDestination(link.href),
+                        'commercial_projects',
+                      )}
                       className={
                         link.primary
                           ? 'inline-flex items-center gap-2 px-4 py-2.5 bg-primary rounded-mdplus shadow-glow text-sm font-medium hover:brightness-110 transition'
@@ -128,6 +135,7 @@ export default function Projetos() {
               )}
               <a
                 href={getProjectCasePath(project)}
+                onClick={() => trackProject(project.id, 'case', 'commercial_projects')}
                 className="mt-4 inline-flex w-fit items-center gap-2 text-sm font-semibold text-primary transition hover:brightness-125"
               >
                 Ver case completo
@@ -165,6 +173,7 @@ export default function Projetos() {
               {isCaseStudyProject(project) ? (
                 <a
                   href={getProjectCasePath(project)}
+                  onClick={() => trackProject(project.id, 'case', 'commercial_supporting_projects')}
                   className="mt-5 inline-flex items-center gap-2 self-start rounded-mdplus border border-white/15 px-3 py-2 text-sm transition hover:bg-white/5"
                 >
                   Ver case completo

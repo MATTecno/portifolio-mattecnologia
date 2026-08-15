@@ -14,6 +14,7 @@ export default defineConfig({
         projectInventory: resolve(import.meta.dirname, 'projetos/estoque/index.html'),
         projectSignature: resolve(import.meta.dirname, 'projetos/zd-signature-input/index.html'),
         projectPos: resolve(import.meta.dirname, 'projetos/pdv/index.html'),
+        privacy: resolve(import.meta.dirname, 'privacidade/index.html'),
       },
     },
   },

@@ -1,5 +1,6 @@
 import { FaArrowLeft, FaArrowUpRightFromSquare, FaCheck } from 'react-icons/fa6'
 import type { CaseStudyProject } from '../data/projects'
+import { getProjectDestination, trackProject } from '../lib/analytics'
 
 type ProjectCasePageProps = {
   project: CaseStudyProject
@@ -96,6 +97,11 @@ export default function ProjectCasePage({ project }: ProjectCasePageProps) {
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackProject(
+                      project.id,
+                      getProjectDestination(link.href),
+                      'project_case_hero',
+                    )}
                     className={link.primary
                       ? 'inline-flex items-center gap-2 rounded-mdplus bg-primary px-5 py-3 font-semibold shadow-glow transition hover:brightness-110'
                       : 'inline-flex items-center gap-2 rounded-mdplus border border-white/15 px-5 py-3 font-semibold transition hover:bg-white/5'}
@@ -195,7 +201,10 @@ export default function ProjectCasePage({ project }: ProjectCasePageProps) {
       </main>
 
       <footer className="border-t border-white/10 px-4 py-7 text-center text-sm text-white/50 sm:px-6">
-        MATTecnologia · Sistemas e produtos digitais sob medida
+        <p>MATTecnologia · Sistemas e produtos digitais sob medida</p>
+        <a href="/privacidade/" className="mt-2 inline-block underline-offset-4 hover:underline focus:underline">
+          Privacidade
+        </a>
       </footer>
     </div>
   )
