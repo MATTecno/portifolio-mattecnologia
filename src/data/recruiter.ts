@@ -1,3 +1,11 @@
+import {
+  getProjectById,
+  getProjectCasePath,
+  isCaseStudyProject,
+  type CaseStudyProject,
+  type ResponsiveImage,
+} from './projects'
+
 export type RecruiterLink = {
   label: string
   href: string
@@ -22,8 +30,8 @@ export type RecruiterProject = {
   stack: readonly string[]
   links: readonly RecruiterLink[]
   featured: boolean
-  cover?: string
-  coverAlt?: string
+  cover?: ResponsiveImage
+  casePath?: string
 }
 
 export type RecruiterSkillGroup = {
@@ -54,80 +62,36 @@ export type RecruiterProfile = {
   }[]
 }
 
+function requireCaseProject(id: string): CaseStudyProject {
+  const project = getProjectById(id)
+  if (!project || !isCaseStudyProject(project)) {
+    throw new Error(`Projeto de case não encontrado: ${id}`)
+  }
+  return project
+}
+
+function toRecruiterProject(id: string): RecruiterProject {
+  const project = requireCaseProject(id)
+  return {
+    id: project.id,
+    title: project.title,
+    category: project.category,
+    status: project.status,
+    summary: project.summary,
+    contributions: project.caseStudy.contributions,
+    stack: project.stack,
+    links: project.links.map(({ label, href }) => ({ label, href })),
+    featured: true,
+    cover: project.featured ? project.cover : undefined,
+    casePath: getProjectCasePath(project),
+  }
+}
+
 export const RECRUITER_PROJECTS: readonly RecruiterProject[] = [
-  {
-    id: 'convites-saas',
-    title: 'Convites — SaaS de convites personalizados',
-    category: 'SaaS',
-    status: 'Em pré-lançamento',
-    summary:
-      'Produto multi-tenant para criar, compartilhar e acompanhar convites personalizados por organização.',
-    contributions: [
-      'Planejamento da arquitetura e modelagem das entidades principais.',
-      'Autenticação, organizações, usuários e isolamento de dados por cliente.',
-      'Links públicos, painel privado, lista de espera e integrações de e-mail.',
-    ],
-    stack: ['Next.js', 'TypeScript', 'React', 'Supabase', 'PostgreSQL', 'Vercel'],
-    links: [{ label: 'Acessar produto', href: 'https://convites.mattecnologia.dev.br' }],
-    featured: true,
-    cover: '/projects/convites.webp',
-    coverAlt: 'Landing page do SaaS Convites com formulário de lista de espera',
-  },
-  {
-    id: 'zd-signature-input',
-    title: 'ZdSignatureInput',
-    category: 'Biblioteca reutilizável',
-    status: 'Pacote publicado',
-    summary:
-      'Componente para captura de assinatura por canvas ou upload, distribuído como pacote versionado no NPM.',
-    contributions: [
-      'API configurável com validação, eventos e saída em PNG base64.',
-      'Organização em pacotes reutilizáveis para integração em aplicações Vue.',
-      'Pipeline de lint, build e verificação do pacote antes da publicação.',
-    ],
-    stack: ['TypeScript', 'Vue.js', 'Vuetify', 'Zeedhi', 'NPM'],
-    links: [
-      { label: 'GitHub', href: 'https://github.com/MATTecno/zd-signature-input' },
-      { label: 'Pacote NPM', href: 'https://www.npmjs.com/package/@marcelodl49/zd-signature-input' },
-    ],
-    featured: true,
-    cover: '/projects/zd-signature.webp',
-    coverAlt: 'Demonstração do ZdSignatureInput com assinatura fictícia desenhada no canvas',
-  },
-  {
-    id: 'estoque-desktop',
-    title: 'Gerenciamento de Estoque Desktop',
-    category: 'Aplicação desktop',
-    status: 'MVP em evolução',
-    summary:
-      'Aplicação Windows offline para controlar produtos, entradas, saídas, validades e histórico operacional.',
-    contributions: [
-      'Arquitetura em camadas com persistência local e funcionamento sem internet.',
-      'Controle de movimentações, alertas, auditoria e autorização administrativa.',
-      'Relatórios em Excel, backup local, testes e instalador para Windows.',
-    ],
-    stack: ['C#', '.NET 10', 'Avalonia UI', 'SQLite', 'Dapper'],
-    links: [],
-    featured: true,
-    cover: '/projects/estoque.webp',
-    coverAlt: 'Painel do sistema desktop de estoque com dados totalmente fictícios',
-  },
-  {
-    id: 'pdv',
-    title: 'Sistema PDV Full Stack',
-    category: 'Aplicação web',
-    status: 'Projeto full stack',
-    summary:
-      'Sistema de ponto de venda com autenticação, produtos, estoque, usuários e comunicação entre frontend e backend.',
-    contributions: [
-      'APIs para integração entre a interface e as regras de negócio.',
-      'Autenticação JWT, perfis de acesso e gerenciamento de produtos.',
-      'Estrutura preparada para publicação em AWS e Vercel.',
-    ],
-    stack: ['React', 'Laravel', 'PostgreSQL', 'JWT', 'AWS', 'Vercel'],
-    links: [],
-    featured: true,
-  },
+  toRecruiterProject('convites-saas'),
+  toRecruiterProject('zd-signature-input'),
+  toRecruiterProject('estoque-desktop'),
+  toRecruiterProject('pdv'),
   {
     id: 'android-barcode',
     title: 'Aplicativo Android para leitura de código de barras',

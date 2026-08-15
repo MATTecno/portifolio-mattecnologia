@@ -5,6 +5,7 @@ import {
   RECRUITER_PROJECTS,
   RESUME_PHONE,
 } from './recruiter'
+import { getProjectById } from './projects'
 
 describe('dados profissionais para recrutadores', () => {
   it('mantém identidade e contatos obrigatórios atualizados', () => {
@@ -39,8 +40,21 @@ describe('dados profissionais para recrutadores', () => {
     expect(illustratedProjects).toHaveLength(3)
 
     for (const project of illustratedProjects) {
-      expect(project.cover).toMatch(/^\/projects\/.+\.webp$/)
-      expect(project.coverAlt?.length).toBeGreaterThan(20)
+      expect(project.cover?.src).toMatch(/^\/projects\/.+\.webp$/)
+      expect(project.cover?.alt.length).toBeGreaterThan(20)
+    }
+  })
+
+  it('referencia o catálogo canônico nos quatro projetos principais', () => {
+    for (const recruiterProject of FEATURED_RECRUITER_PROJECTS) {
+      const catalogProject = getProjectById(recruiterProject.id)
+
+      expect(catalogProject).toBeDefined()
+      expect(recruiterProject.title).toBe(catalogProject?.title)
+      expect(recruiterProject.status).toBe(catalogProject?.status)
+      expect(recruiterProject.category).toBe(catalogProject?.category)
+      expect(recruiterProject.stack).toEqual(catalogProject?.stack)
+      expect(recruiterProject.casePath).toMatch(/^\/projetos\/.+\/$/)
     }
   })
 })

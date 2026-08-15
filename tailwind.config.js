@@ -13,8 +13,8 @@ export default {
         mdplus: '6px',
       },
       fontFamily: {
-        orbitron: ['Orbitron', 'sans-serif'],
-        inter: ['Inter', 'system-ui', 'sans-serif'],
+        orbitron: ['Orbitron Variable', 'sans-serif'],
+        inter: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
       },
       boxShadow: {
         glow: '0 0 20px rgba(30,144,255,0.35)', // efeito glow sutil

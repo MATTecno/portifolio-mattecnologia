@@ -1,5 +1,4 @@
 import { useRef, useState } from 'react'
-import emailjs from '@emailjs/browser'
 
 export default function Contato() {
   const formRef = useRef<HTMLFormElement>(null)
@@ -45,6 +44,7 @@ export default function Contato() {
 
     setStatus('sending')
     try {
+      const { default: emailjs } = await import('@emailjs/browser')
       // Opcional: adicionar o campo "site" para o template
       const siteField = formEl.elements.namedItem('site') as HTMLInputElement | null
       if (siteField) siteField.value = window.location.origin

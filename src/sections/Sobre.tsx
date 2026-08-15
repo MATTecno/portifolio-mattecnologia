@@ -36,12 +36,15 @@ export default function Sobre() {
 
             <aside className="flex w-full max-w-sm items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.035] p-4 lg:w-[330px]">
                 <img
-                    src="/marcelo-profissional.webp"
+                    src="/marcelo-profissional-160.webp"
+                    srcSet="/marcelo-profissional-160.webp 160w, /marcelo-profissional-320.webp 320w"
+                    sizes="112px"
                     alt="Marcelo Diogo, responsável técnico pela MATTecnologia"
                     className="size-24 shrink-0 rounded-xl object-cover ring-1 ring-white/15 md:size-28"
                     loading="lazy"
-                    width={900}
-                    height={900}
+                    decoding="async"
+                    width={320}
+                    height={320}
                 />
                 <div>
                     <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">Responsável técnico</p>

@@ -20,6 +20,7 @@ import {
 } from '../data/recruiter'
 
 const RESUME_PATH = '/Marcelo-Diogo-Teixeira-Curriculo.pdf'
+const IS_LOCAL_PREVIEW = ['localhost', '127.0.0.1'].includes(window.location.hostname)
 
 const NAVIGATION = [
   ['Resumo', '#resumo'],
@@ -149,13 +150,16 @@ export default function RecruiterPage() {
 
           <aside className="rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-sm">
             <img
-              src="/marcelo-profissional.webp"
+              src="/marcelo-profissional-320.webp"
+              srcSet="/marcelo-profissional-160.webp 160w, /marcelo-profissional-320.webp 320w, /marcelo-profissional-480.webp 480w"
+              sizes="210px"
               alt="Marcelo Diogo Teixeira"
               className="mx-auto aspect-square w-full max-w-[210px] rounded-2xl object-cover ring-1 ring-slate-200"
               loading="eager"
               fetchPriority="high"
-              width={900}
-              height={900}
+              decoding="async"
+              width={480}
+              height={480}
             />
             <h2 className="mt-6 border-t border-slate-200 pt-5 font-bold text-slate-950">Disponibilidade</h2>
             <div className="mt-4 flex items-start gap-3 text-sm text-slate-600">
@@ -246,12 +250,15 @@ export default function RecruiterPage() {
                   {project.cover ? (
                     <div className="aspect-video border-b border-slate-200 bg-slate-100">
                       <img
-                        src={project.cover}
-                        alt={project.coverAlt}
+                        src={project.cover.src}
+                        srcSet={project.cover.srcSet}
+                        sizes="(min-width: 1024px) 560px, calc(100vw - 40px)"
+                        alt={project.cover.alt}
                         className="size-full object-contain"
                         loading="lazy"
-                        width={1280}
-                        height={720}
+                        decoding="async"
+                        width={project.cover.width}
+                        height={project.cover.height}
                       />
                     </div>
                   ) : (
@@ -286,8 +293,17 @@ export default function RecruiterPage() {
                         </span>
                       ))}
                     </div>
-                    {project.links.length > 0 && (
+                    {(project.casePath || project.links.length > 0) && (
                       <div className="mt-6 flex flex-wrap gap-3">
+                        {project.casePath && (
+                          <a
+                            href={project.casePath}
+                            className="inline-flex items-center gap-2 rounded-lg bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+                          >
+                            Ver estudo de caso
+                            <FaExternalLinkAlt className="text-xs" aria-hidden="true" />
+                          </a>
+                        )}
                         {project.links.map((link) => (
                           <a
                             key={link.href}
@@ -392,7 +408,7 @@ export default function RecruiterPage() {
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <a
                 href={`mailto:${RECRUITER_PROFILE.email}?subject=Oportunidade%20profissional%20para%20Marcelo%20Diogo`}
-                className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-500"
+                className="inline-flex max-w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-500"
               >
                 <FaEnvelope aria-hidden="true" />
                 {RECRUITER_PROFILE.email}
@@ -417,7 +433,7 @@ export default function RecruiterPage() {
         </div>
       </footer>
 
-      <Analytics />
+      {!IS_LOCAL_PREVIEW && <Analytics />}
     </div>
   )
 }

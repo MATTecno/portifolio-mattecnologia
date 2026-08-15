@@ -1,3 +1,5 @@
+@import '@fontsource-variable/orbitron';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -14,7 +16,7 @@ body {
     min-width: 320px;
     min-height: 100vh;
     margin: 0;
-    font-family: Inter, system-ui, sans-serif;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 .recruiter-page {

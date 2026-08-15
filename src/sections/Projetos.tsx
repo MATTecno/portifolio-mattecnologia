@@ -1,50 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
-import { FaArrowUpRightFromSquare, FaCheck, FaExpand } from 'react-icons/fa6'
+import { FaArrowUpRightFromSquare, FaCheck } from 'react-icons/fa6'
 import {
   FEATURED_PROJECTS,
   SUPPORTING_PROJECTS,
-  type FeaturedProject,
+  getProjectCasePath,
+  isCaseStudyProject,
   type SupportingProject,
 } from '../data/projects'
 
 export default function Projetos() {
   const [open, setOpen] = useState<SupportingProject | null>(null)
-  const [preview, setPreview] = useState<FeaturedProject | null>(null)
-  const [hoverPreview, setHoverPreview] = useState<FeaturedProject | null>(null)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
-  const previewCloseButtonRef = useRef<HTMLButtonElement>(null)
-  const hoverOpenTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  const clearHoverOpenTimer = () => {
-    if (hoverOpenTimerRef.current) {
-      clearTimeout(hoverOpenTimerRef.current)
-      hoverOpenTimerRef.current = null
-    }
-  }
-
-  const startHoverPreview = (project: FeaturedProject) => {
-    clearHoverOpenTimer()
-    hoverOpenTimerRef.current = setTimeout(() => {
-      setHoverPreview(project)
-      hoverOpenTimerRef.current = null
-    }, 500)
-  }
-
-  const closeHoverPreview = () => {
-    clearHoverOpenTimer()
-    setHoverPreview(null)
-  }
-
-  const pinPreview = (project: FeaturedProject) => {
-    clearHoverOpenTimer()
-    setHoverPreview(null)
-    setPreview(project)
-  }
-
-  useEffect(() => () => {
-    clearHoverOpenTimer()
-  }, [])
 
   useEffect(() => {
     if (!open) return
@@ -66,26 +32,6 @@ export default function Projetos() {
     }
   }, [open])
 
-  useEffect(() => {
-    if (!preview) return
-
-    const previouslyFocused = document.activeElement as HTMLElement | null
-    const previousOverflow = document.body.style.overflow
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setPreview(null)
-    }
-
-    document.body.style.overflow = 'hidden'
-    window.addEventListener('keydown', closeOnEscape)
-    previewCloseButtonRef.current?.focus()
-
-    return () => {
-      document.body.style.overflow = previousOverflow
-      window.removeEventListener('keydown', closeOnEscape)
-      previouslyFocused?.focus()
-    }
-  }, [preview])
-
   return (
     <section id="portfolio" className="scroll-mt-24 max-w-6xl mx-auto px-6 py-20">
       <div className="max-w-3xl mb-10">
@@ -103,42 +49,29 @@ export default function Projetos() {
             key={project.id}
             className="relative isolate grid overflow-hidden rounded-2xl border border-white/10 bg-white/[0.035] lg:grid-cols-2"
           >
-            <span
-              aria-hidden="true"
-              className="absolute inset-0 z-0 hidden bg-cover bg-center lg:block"
-              style={{ backgroundImage: `url("${project.cover}")` }}
-            />
-            <span aria-hidden="true" className="absolute inset-0 z-0 hidden bg-black/15 lg:block" />
-
-            <button
-              type="button"
-              onClick={() => pinPreview(project)}
-              onMouseEnter={() => startHoverPreview(project)}
-              onMouseLeave={closeHoverPreview}
-              aria-label={`Visualizar captura completa de ${project.title}`}
-              className={`relative z-10 block aspect-video overflow-hidden bg-[#0b0b0f] text-left lg:aspect-auto lg:min-h-full lg:bg-transparent ${
+            <a
+              href={getProjectCasePath(project)}
+              aria-label={`Ver case completo de ${project.title}`}
+              className={`group relative z-10 block aspect-video overflow-hidden bg-[#0b0b0f] text-left lg:aspect-auto lg:min-h-full ${
                 index % 2 === 1 ? 'lg:order-2' : ''
               }`}
             >
-              <span
-                aria-hidden="true"
-                className="absolute inset-0 scale-110 bg-cover bg-center opacity-30 blur-xl lg:hidden"
-                style={{ backgroundImage: `url("${project.cover}")` }}
-              />
-              <span aria-hidden="true" className="absolute inset-0 bg-black/25 lg:hidden" />
               <img
-                src={project.cover}
-                alt={project.coverAlt}
-                className="absolute inset-0 size-full object-contain transition duration-300 lg:opacity-0"
+                src={project.cover.src}
+                srcSet={project.cover.srcSet}
+                sizes={project.cover.sizes}
+                alt={project.cover.alt}
+                className="absolute inset-0 size-full object-contain transition duration-300 group-hover:scale-[1.015]"
                 loading="lazy"
-                width={1280}
-                height={720}
+                decoding="async"
+                width={project.cover.width}
+                height={project.cover.height}
               />
-              <span className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 bg-gradient-to-t from-black/85 to-transparent px-5 pb-4 pt-12 text-sm opacity-90">
-                <span>Ver captura completa</span>
-                <FaExpand aria-hidden="true" />
+              <span className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 bg-gradient-to-t from-black/90 to-transparent px-5 pb-4 pt-12 text-sm text-white">
+                <span>Ver case completo</span>
+                <FaArrowUpRightFromSquare aria-hidden="true" />
               </span>
-            </button>
+            </a>
 
             <div className="relative z-10 flex flex-col justify-center bg-[#15151a] p-6 md:p-8 lg:bg-[#15151a]/95 lg:p-10 lg:backdrop-blur-sm">
               <div className="flex flex-wrap items-center gap-2 text-xs mb-4">
@@ -193,6 +126,13 @@ export default function Projetos() {
                   ))}
                 </div>
               )}
+              <a
+                href={getProjectCasePath(project)}
+                className="mt-4 inline-flex w-fit items-center gap-2 text-sm font-semibold text-primary transition hover:brightness-125"
+              >
+                Ver case completo
+                <FaArrowUpRightFromSquare aria-hidden="true" className="text-xs" />
+              </a>
             </div>
           </article>
         ))}
@@ -222,12 +162,22 @@ export default function Projetos() {
                   </span>
                 ))}
               </div>
-              <button
-                onClick={() => setOpen(project)}
-                className="mt-5 self-start px-3 py-2 border border-white/15 rounded-mdplus text-sm hover:bg-white/5 transition"
-              >
-                Ver detalhes
-              </button>
+              {isCaseStudyProject(project) ? (
+                <a
+                  href={getProjectCasePath(project)}
+                  className="mt-5 inline-flex items-center gap-2 self-start rounded-mdplus border border-white/15 px-3 py-2 text-sm transition hover:bg-white/5"
+                >
+                  Ver case completo
+                  <FaArrowUpRightFromSquare aria-hidden="true" className="text-xs" />
+                </a>
+              ) : (
+                <button
+                  onClick={() => setOpen(project)}
+                  className="mt-5 self-start px-3 py-2 border border-white/15 rounded-mdplus text-sm hover:bg-white/5 transition"
+                >
+                  Ver detalhes
+                </button>
+              )}
             </article>
           ))}
         </div>
@@ -273,63 +223,6 @@ export default function Projetos() {
         </div>
       )}
 
-      {preview && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="project-preview-title"
-          className="fixed inset-0 z-50 grid place-items-center bg-black/85 p-4 backdrop-blur-sm md:p-8"
-          onClick={() => setPreview(null)}
-        >
-          <div
-            className="relative flex max-h-full w-full max-w-6xl flex-col rounded-2xl border border-white/15 bg-[#101016] p-3 shadow-2xl md:p-4"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="mb-3 flex items-center justify-between gap-4 px-1">
-              <h3 id="project-preview-title" className="truncate text-sm font-semibold md:text-base">
-                {preview.title}
-              </h3>
-              <button
-                ref={previewCloseButtonRef}
-                type="button"
-                onClick={() => setPreview(null)}
-                className="shrink-0 rounded-mdplus border border-white/15 px-3 py-1.5 text-sm hover:bg-white/5"
-                aria-label="Fechar visualização da imagem"
-              >
-                Fechar
-              </button>
-            </div>
-            <img
-              src={preview.cover}
-              alt={preview.coverAlt}
-              className="min-h-0 w-full flex-1 rounded-xl object-contain"
-              width={1280}
-              height={720}
-            />
-          </div>
-        </div>
-      )}
-
-      {hoverPreview && createPortal(
-        <div
-          aria-hidden="true"
-          className="pointer-events-none fixed inset-0 z-[1000] hidden place-items-center bg-black/85 p-8 backdrop-blur-sm md:grid"
-        >
-          <div className="flex max-h-full max-w-6xl flex-col gap-3 rounded-2xl border border-white/15 bg-[#101016] p-3 shadow-2xl">
-            <img
-              src={hoverPreview.cover}
-              alt=""
-              className="max-h-[calc(100vh-8rem)] w-auto max-w-full rounded-xl object-contain"
-              width={1280}
-              height={720}
-            />
-            <span className="px-2 pb-1 text-center text-sm text-white/75">
-              Clique para manter a imagem aberta
-            </span>
-          </div>
-        </div>,
-        document.body,
-      )}
     </section>
   )
 }
