@@ -52,6 +52,7 @@ describe('eventos públicos de analytics', () => {
       enable_recording_console_log: false,
       disable_surveys: false,
       disable_surveys_automatic_display: false,
+      advanced_only_evaluate_survey_feature_flags: true,
       disable_product_tours: true,
       disable_conversations: true,
       disable_web_experiments: true,
@@ -66,6 +67,7 @@ describe('eventos públicos de analytics', () => {
     expect(createPostHogConfig('https://us.i.posthog.com', { surveysEnabled: false })).toMatchObject({
       disable_surveys: true,
       disable_surveys_automatic_display: true,
+      advanced_only_evaluate_survey_feature_flags: false,
     })
   })
 

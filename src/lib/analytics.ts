@@ -49,6 +49,7 @@ type AnalyticsProvider = {
   opt_in_capturing: (options?: { captureEventName?: false }) => void
   opt_out_capturing: () => void
   reset: (resetDeviceId?: boolean) => void
+  reloadFeatureFlags: () => void
   startSessionRecording: (options?: { sampling?: boolean }) => void
   stopSessionRecording: () => void
 }
@@ -85,6 +86,7 @@ let replayGranted = false
 let pageViewTracked = false
 let currentPreferences: ConsentPreferences | null = null
 let queue: AnalyticsEvent[] = []
+let replayRuntimePromise: Promise<unknown> | null = null
 
 export function buildAnalyticsEvent<TName extends EventName>(
   name: TName,
@@ -152,6 +154,7 @@ export function createPostHogConfig(
     enable_recording_console_log: false,
     disable_surveys: options.surveysEnabled === false,
     disable_surveys_automatic_display: options.surveysEnabled === false,
+    advanced_only_evaluate_survey_feature_flags: options.surveysEnabled !== false,
     disable_product_tours: true,
     disable_conversations: true,
     disable_web_experiments: true,
@@ -245,7 +248,16 @@ function cancelSessionReplay(): void {
   posthogClient?.stopSessionRecording()
 }
 
-function startSessionReplay(client: AnalyticsProvider): void {
+async function startSessionReplay(client: AnalyticsProvider): Promise<void> {
+  replayRuntimePromise ??= import('posthog-js/dist/posthog-recorder')
+
+  try {
+    await replayRuntimePromise
+  } catch {
+    replayRuntimePromise = null
+    return
+  }
+
   if (analyticsGranted && replayGranted && posthogClient === client) {
     client.startSessionRecording({ sampling: true })
   }
@@ -256,10 +268,16 @@ async function loadPostHog(projectKey: string, apiHost: string): Promise<void> {
   isLoading = true
 
   try {
-    const [{ default: posthog }, { SessionReplayExtensions, SurveysExtensions }] = await Promise.all([
-      import('posthog-js/dist/module.slim'),
-      import('posthog-js/dist/extension-bundles'),
-    ])
+    const surveysEnabled = context?.pageType !== 'privacy'
+    const surveyRuntime = surveysEnabled
+      ? import('posthog-js/dist/surveys')
+      : Promise.resolve()
+    const [{ default: posthog }, { SessionReplayExtensions, SurveysExtensions }] =
+      await Promise.all([
+        import('posthog-js/dist/module.slim'),
+        import('posthog-js/dist/extension-bundles'),
+        surveyRuntime,
+      ])
 
     if (!analyticsGranted) return
 
@@ -268,14 +286,15 @@ async function loadPostHog(projectKey: string, apiHost: string): Promise<void> {
         ...SessionReplayExtensions,
         ...SurveysExtensions,
       },
-      surveysEnabled: context?.pageType !== 'privacy',
+      surveysEnabled,
     }))
 
     posthog.reset()
     posthog.opt_in_capturing({ captureEventName: false })
+    posthog.reloadFeatureFlags()
 
     posthogClient = posthog
-    if (replayGranted) startSessionReplay(posthog)
+    if (replayGranted) void startSessionReplay(posthog)
 
     const pendingEvents = queue
     queue = []
@@ -355,7 +374,7 @@ function applyConsent(preferences: ConsentPreferences | null): void {
   }
 
   if (posthogClient) {
-    if (replayGranted) startSessionReplay(posthogClient)
+    if (replayGranted) void startSessionReplay(posthogClient)
     else cancelSessionReplay()
     return
   }
