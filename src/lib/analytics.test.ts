@@ -10,7 +10,6 @@ import {
   hasReplayConsent,
   isDoNotTrackEnabled,
   isPostHogBrowserStorageKey,
-  replayStartDelay,
   sanitizeProviderEvent,
 } from './analytics'
 
@@ -217,12 +216,6 @@ describe('eventos públicos de analytics', () => {
     expect(hasReplayConsent(analyticsOnly, false)).toBe(false)
     expect(hasReplayConsent(allAccepted, false)).toBe(true)
     expect(hasReplayConsent(allAccepted, true)).toBe(false)
-  })
-
-  it('só inicia replay depois de dez segundos de sessão elegível', () => {
-    expect(replayStartDelay(null, 1_000)).toBe(10_000)
-    expect(replayStartDelay(11_000, 6_000)).toBe(5_000)
-    expect(replayStartDelay(11_000, 12_000)).toBe(0)
   })
 
   it('reconhece toda a persistência do projeto que deve ser removida na revogação', () => {

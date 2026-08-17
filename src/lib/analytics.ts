@@ -73,9 +73,6 @@ const PRIVATE_PROVIDER_PROPERTIES = [
   '$session_entry_pathname',
   '$session_referrer',
 ] as const
-const REPLAY_ELIGIBLE_AT_KEY = 'mattecnologia:replay-eligible-at'
-export const REPLAY_MINIMUM_DURATION_MS = 10_000
-
 let context: PageContext | null = null
 let source = 'direto'
 let pagePath = '/'
@@ -87,7 +84,6 @@ let analyticsGranted = false
 let replayGranted = false
 let pageViewTracked = false
 let currentPreferences: ConsentPreferences | null = null
-let replayStartTimer: ReturnType<typeof globalThis.setTimeout> | null = null
 let queue: AnalyticsEvent[] = []
 
 export function buildAnalyticsEvent<TName extends EventName>(
@@ -245,49 +241,14 @@ export function isPostHogBrowserStorageKey(key: string, projectKey: string): boo
   return key.includes(projectKey) && (key.startsWith('ph_') || key.startsWith('__ph_'))
 }
 
-export function replayStartDelay(eligibleAt: number | null, now = Date.now()): number {
-  if (!eligibleAt || !Number.isFinite(eligibleAt)) return REPLAY_MINIMUM_DURATION_MS
-  return Math.max(0, eligibleAt - now)
-}
-
-function cancelSessionReplay(clearEligibility: boolean): void {
-  if (replayStartTimer) {
-    globalThis.clearTimeout(replayStartTimer)
-    replayStartTimer = null
-  }
-  if (clearEligibility) {
-    try {
-      window.sessionStorage.removeItem(REPLAY_ELIGIBLE_AT_KEY)
-    } catch {
-      // Session storage is optional; replay still remains consent-gated.
-    }
-  }
+function cancelSessionReplay(): void {
   posthogClient?.stopSessionRecording()
 }
 
-function scheduleSessionReplay(client: AnalyticsProvider): void {
-  if (!replayGranted || replayStartTimer) return
-
-  let eligibleAt: number | null = null
-  try {
-    const stored = Number(window.sessionStorage.getItem(REPLAY_ELIGIBLE_AT_KEY))
-    eligibleAt = Number.isFinite(stored) && stored > 0
-      ? stored
-      : Date.now() + REPLAY_MINIMUM_DURATION_MS
-    window.sessionStorage.setItem(REPLAY_ELIGIBLE_AT_KEY, String(eligibleAt))
-  } catch {
-    eligibleAt = Date.now() + REPLAY_MINIMUM_DURATION_MS
+function startSessionReplay(client: AnalyticsProvider): void {
+  if (analyticsGranted && replayGranted && posthogClient === client) {
+    client.startSessionRecording({ sampling: true })
   }
-
-  const start = () => {
-    replayStartTimer = null
-    if (analyticsGranted && replayGranted && posthogClient === client) {
-      client.startSessionRecording({ sampling: true })
-    }
-  }
-  const delay = replayStartDelay(eligibleAt)
-  if (delay === 0) start()
-  else replayStartTimer = globalThis.setTimeout(start, delay)
 }
 
 async function loadPostHog(projectKey: string, apiHost: string): Promise<void> {
@@ -314,7 +275,7 @@ async function loadPostHog(projectKey: string, apiHost: string): Promise<void> {
     posthog.opt_in_capturing({ captureEventName: false })
 
     posthogClient = posthog
-    if (replayGranted) scheduleSessionReplay(posthog)
+    if (replayGranted) startSessionReplay(posthog)
 
     const pendingEvents = queue
     queue = []
@@ -356,7 +317,7 @@ function disableAnalytics(projectKey: string | undefined): void {
   pageViewTracked = false
   queue = []
 
-  cancelSessionReplay(true)
+  cancelSessionReplay()
 
   if (posthogClient) {
     try {
@@ -394,8 +355,8 @@ function applyConsent(preferences: ConsentPreferences | null): void {
   }
 
   if (posthogClient) {
-    if (replayGranted) scheduleSessionReplay(posthogClient)
-    else cancelSessionReplay(true)
+    if (replayGranted) startSessionReplay(posthogClient)
+    else cancelSessionReplay()
     return
   }
 

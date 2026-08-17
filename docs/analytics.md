@@ -23,7 +23,7 @@ No projeto **Default project** do PostHog, confirme antes do rollout:
 - replay autorizado apenas em `www.mattecnologia.dev.br` e `mattecnologia.dev.br`;
 - IP não anonimizado conforme a decisão registrada na política de privacidade.
 
-O cliente também aplica essas proteções: só inicia o Replay após 10 segundos de sessão consentida, não captura console ou conteúdo de rede, mascara todos os inputs e bloqueia elementos `.ph-no-capture`.
+O cliente inicia o Replay assim que há consentimento para as duas categorias. O PostHog mantém a gravação em buffer e descarta remotamente sessões com menos de 10 segundos, preservando o começo das sessões válidas. O cliente não captura console ou conteúdo de rede, mascara todos os inputs e bloqueia elementos `.ph-no-capture`.
 
 ## Consentimento
 
