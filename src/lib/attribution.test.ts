@@ -3,6 +3,7 @@ import {
   ATTRIBUTION_STORAGE_KEY,
   normalizeSource,
   resolveAttribution,
+  sanitizeAnalyticsUrl,
   sourceFromReferrer,
   type AttributionStorage,
 } from './attribution'
@@ -96,5 +97,12 @@ describe('atribuição da origem', () => {
 
     expect(resolve('https://www.mattecnologia.dev.br/?origem=email', blockedStorage).source).toBe('email')
     expect(resolve('https://www.mattecnologia.dev.br/', blockedStorage).source).toBe('direto')
+  })
+
+  it('remove query strings e preserva somente âncoras conhecidas antes do analytics', () => {
+    expect(sanitizeAnalyticsUrl(new URL('https://www.mattecnologia.dev.br/?email=privado#contato')))
+      .toBe('/#contato')
+    expect(sanitizeAnalyticsUrl(new URL('https://www.mattecnologia.dev.br/recrutadores/?vaga=123#valor-livre')))
+      .toBe('/recrutadores/')
   })
 })

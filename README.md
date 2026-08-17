@@ -56,12 +56,8 @@ npm run preview
 
 O preview de produção normalmente fica em <http://localhost:4173>.
 
-## Visitas da página para recrutadores
+## Métricas, feedback e gravações
 
-A rota `/recrutadores/` usa o Vercel Web Analytics para registrar visitas de forma anônima e sem cookies. Para começar a receber os dados:
+O site usa PostHog somente após consentimento explícito, respeita DNT e permite preferências separadas para métricas/feedback e Session Replay. O SDK não é carregado antes da autorização, e não são criados perfis associados a nome ou e-mail.
 
-1. Abra o projeto no painel da Vercel.
-2. Entre em **Analytics**.
-3. Clique em **Enable** e faça um novo deploy.
-
-Depois do deploy, filtre a página `/recrutadores/` no painel para consultar visitantes, visualizações, origem, país, dispositivo e navegador. A integração não identifica nome, e-mail ou IP do visitante.
+Configuração, eventos, proteções de privacidade e checklist de rollout estão em [`docs/analytics.md`](docs/analytics.md).

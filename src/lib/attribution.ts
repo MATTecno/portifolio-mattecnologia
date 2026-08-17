@@ -1,6 +1,23 @@
 export const ATTRIBUTION_STORAGE_KEY = 'mattecnologia:analytics-source'
 
 const SOURCE_PATTERN = /^[a-z0-9][a-z0-9_-]{0,39}$/
+const SAFE_ANALYTICS_HASHES = new Set([
+  'top',
+  'sobre',
+  'servicos',
+  'processo',
+  'portfolio',
+  'estimativa',
+  'contato',
+  'resumo',
+  'experiencia',
+  'projetos',
+  'competencias',
+  'formacao',
+  'participacao-title',
+  'architecture-title',
+  'decisions-title',
+])
 
 export type AttributionStorage = Pick<Storage, 'getItem' | 'setItem'>
 
@@ -86,6 +103,11 @@ export function resolveAttribution({
   return sourceFromReferrer(referrer, currentOrigin)
 }
 
+export function sanitizeAnalyticsUrl(url: URL): string {
+  const hash = url.hash.slice(1)
+  return `${url.pathname}${SAFE_ANALYTICS_HASHES.has(hash) ? `#${hash}` : ''}`
+}
+
 export function captureBrowserAttribution(): string {
   const url = new URL(window.location.href)
   let storage: AttributionStorage | null = null
@@ -96,11 +118,17 @@ export function captureBrowserAttribution(): string {
     storage = null
   }
 
-  return resolveAttribution({
+  const source = resolveAttribution({
     url,
     referrer: document.referrer,
     currentOrigin: window.location.origin,
     storage,
-    replaceUrl: (cleanUrl) => window.history.replaceState(window.history.state, '', cleanUrl),
   })
+
+  const sanitizedUrl = sanitizeAnalyticsUrl(url)
+  if (`${window.location.pathname}${window.location.search}${window.location.hash}` !== sanitizedUrl) {
+    window.history.replaceState(window.history.state, '', sanitizedUrl)
+  }
+
+  return source
 }

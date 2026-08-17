@@ -24,6 +24,7 @@ import {
   trackProject,
   trackResumeDownload,
 } from '../lib/analytics'
+import { openPrivacyPreferences } from '../lib/consent'
 
 const RESUME_PATH = '/Marcelo-Diogo-Teixeira-Curriculo.pdf'
 
@@ -450,9 +451,14 @@ export default function RecruiterPage() {
       <footer className="border-t border-slate-800 bg-slate-950 text-slate-400">
         <div className="mx-auto max-w-6xl px-5 py-7 text-center text-sm md:px-6">
           <p>© {new Date().getFullYear()} Marcelo Diogo Teixeira</p>
-          <a href="/privacidade/" className="mt-2 inline-block underline-offset-4 hover:underline focus:underline">
-            Privacidade
-          </a>
+          <div className="mt-2 flex flex-wrap justify-center gap-x-4 gap-y-2">
+            <a href="/privacidade/" className="underline-offset-4 hover:underline focus:underline">
+              Privacidade
+            </a>
+            <button type="button" onClick={openPrivacyPreferences} className="underline-offset-4 hover:underline focus:underline">
+              Preferências de cookies
+            </button>
+          </div>
         </div>
       </footer>
     </div>

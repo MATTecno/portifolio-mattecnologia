@@ -1,6 +1,7 @@
 import { createRoot } from 'react-dom/client'
 import { getProjectBySlug } from './data/projects'
 import { initAnalytics } from './lib/analytics'
+import { mountPrivacyControls } from './lib/privacy-controls'
 import ProjectCasePage from './pages/ProjectCasePage'
 import './styles.css'
 
@@ -14,3 +15,4 @@ if (!rootElement || !project) {
 
 createRoot(rootElement).render(<ProjectCasePage project={project} />)
 initAnalytics({ pageType: 'case' })
+mountPrivacyControls()

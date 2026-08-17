@@ -94,9 +94,9 @@ export default function Contato() {
           className="space-y-4"
           noValidate
         >
-          <input type="text" name="website" className="hidden" tabIndex={-1} autoComplete="off" />
+          <input type="text" name="website" className="ph-no-capture hidden" tabIndex={-1} autoComplete="off" />
 
-          <div>
+          <div className="ph-mask">
             <label className="block text-sm opacity-80 mb-1" htmlFor="from_name">Nome</label>
             <input
               id="from_name"
@@ -108,7 +108,7 @@ export default function Contato() {
             />
           </div>
 
-          <div>
+          <div className="ph-mask">
             <label className="block text-sm opacity-80 mb-1" htmlFor="reply_to">E-mail</label>
             <input
               id="reply_to"
@@ -121,7 +121,7 @@ export default function Contato() {
             />
           </div>
 
-          <div>
+          <div className="ph-mask">
             <label className="block text-sm opacity-80 mb-1" htmlFor="message">Mensagem</label>
             <textarea
               id="message"
@@ -132,7 +132,7 @@ export default function Contato() {
             />
           </div>
 
-          <input type="hidden" name="site" />
+          <input type="hidden" name="site" className="ph-no-capture" />
 
           <button
             type="submit"

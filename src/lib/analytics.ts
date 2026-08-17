@@ -1,6 +1,11 @@
 import type { CaptureResult } from 'posthog-js'
 import type { PostHogConfig } from 'posthog-js/dist/module.slim'
 import { captureBrowserAttribution } from './attribution'
+import {
+  getConsentPreferences,
+  subscribeToConsent,
+  type ConsentPreferences,
+} from './consent'
 
 export type PageType = 'commercial' | 'recruiter' | 'case' | 'privacy'
 export type ContactChannel = 'whatsapp' | 'email' | 'linkedin'
@@ -41,6 +46,11 @@ export type AnalyticsEvent =
 type EventName = AnalyticsEvent['name']
 type AnalyticsProvider = {
   capture: (name: string, properties: Record<string, unknown>) => unknown
+  opt_in_capturing: (options?: { captureEventName?: false }) => void
+  opt_out_capturing: () => void
+  reset: (resetDeviceId?: boolean) => void
+  startSessionRecording: (options?: { sampling?: boolean }) => void
+  stopSessionRecording: () => void
 }
 type EventDetails = {
   page_viewed: Record<string, never>
@@ -58,14 +68,26 @@ const PRIVATE_PROVIDER_PROPERTIES = [
   '$initial_current_url',
   '$initial_referrer',
   '$initial_referring_domain',
+  '$pathname',
+  '$session_entry_url',
+  '$session_entry_pathname',
+  '$session_referrer',
 ] as const
+const REPLAY_ELIGIBLE_AT_KEY = 'mattecnologia:replay-eligible-at'
+export const REPLAY_MINIMUM_DURATION_MS = 10_000
 
 let context: PageContext | null = null
 let source = 'direto'
 let pagePath = '/'
 let posthogClient: AnalyticsProvider | null = null
 let isInitialized = false
+let isLoading = false
 let isUnavailable = false
+let analyticsGranted = false
+let replayGranted = false
+let pageViewTracked = false
+let currentPreferences: ConsentPreferences | null = null
+let replayStartTimer: ReturnType<typeof globalThis.setTimeout> | null = null
 let queue: AnalyticsEvent[] = []
 
 export function buildAnalyticsEvent<TName extends EventName>(
@@ -94,12 +116,22 @@ export function sanitizeProviderEvent(event: CaptureResult | null): CaptureResul
   return { ...event, properties }
 }
 
-export function createPostHogConfig(apiHost: string): Partial<PostHogConfig> {
+export function createPostHogConfig(
+  apiHost: string,
+  options: {
+    extensionClasses?: PostHogConfig['__extensionClasses']
+    surveysEnabled?: boolean
+  } = {},
+): Partial<PostHogConfig> {
   return {
     api_host: apiHost,
     defaults: '2026-05-30',
-    cookieless_mode: 'always',
-    persistence: 'memory',
+    persistence: 'localStorage+cookie',
+    cookie_expiration: 180,
+    cross_subdomain_cookie: false,
+    secure_cookie: true,
+    opt_out_capturing_by_default: true,
+    opt_out_persistence_by_default: true,
     person_profiles: 'never',
     respect_dnt: true,
     autocapture: false,
@@ -111,18 +143,29 @@ export function createPostHogConfig(apiHost: string): Partial<PostHogConfig> {
     capture_dead_clicks: false,
     capture_exceptions: false,
     disable_session_recording: true,
-    disable_surveys: true,
-    disable_surveys_automatic_display: true,
+    session_recording: {
+      maskAllInputs: true,
+      maskTextSelector: '.ph-mask',
+      blockSelector: '.ph-no-capture',
+      recordCrossOriginIframes: false,
+      recordHeaders: false,
+      recordBody: false,
+      strictMinimumDuration: true,
+      maskCapturedNetworkRequestFn: () => null,
+    },
+    enable_recording_console_log: false,
+    disable_surveys: options.surveysEnabled === false,
+    disable_surveys_automatic_display: options.surveysEnabled === false,
     disable_product_tours: true,
     disable_conversations: true,
     disable_web_experiments: true,
     disable_external_dependency_loading: true,
-    advanced_disable_flags: true,
     save_referrer: false,
     save_campaign_params: false,
     disable_scroll_properties: true,
     property_denylist: [...PRIVATE_PROVIDER_PROPERTIES],
     before_send: sanitizeProviderEvent,
+    __extensionClasses: options.extensionClasses,
   }
 }
 
@@ -139,8 +182,22 @@ export function hasAnalyticsConfig(
   return enabled === 'true' && Boolean(projectKey) && Boolean(apiHost) && !doNotTrack
 }
 
+export function hasAnalyticsConsent(
+  preferences: ConsentPreferences | null,
+  doNotTrack: boolean,
+): boolean {
+  return Boolean(preferences?.analytics) && !doNotTrack
+}
+
+export function hasReplayConsent(
+  preferences: ConsentPreferences | null,
+  doNotTrack: boolean,
+): boolean {
+  return hasAnalyticsConsent(preferences, doNotTrack) && Boolean(preferences?.replay)
+}
+
 function capture(event: AnalyticsEvent): void {
-  if (isUnavailable || !context) return
+  if (!analyticsGranted || isUnavailable || !context) return
 
   if (!posthogClient) {
     queue.push(event)
@@ -159,18 +216,114 @@ function track<TName extends EventName>(name: TName, details: EventDetails[TName
   capture(buildAnalyticsEvent(name, details, context, source, pagePath))
 }
 
-async function loadPostHog(projectKey: string, apiHost: string): Promise<void> {
+export function clearPostHogBrowserStorage(projectKey: string): void {
+  if (typeof window === 'undefined' || typeof document === 'undefined') return
+
   try {
-    const { default: posthog } = await import('posthog-js/dist/module.slim')
-    posthog.init(projectKey, createPostHogConfig(apiHost))
+    const matchingKeys = Object.keys(window.localStorage)
+      .filter((key) => isPostHogBrowserStorageKey(key, projectKey))
+    matchingKeys.forEach((key) => window.localStorage.removeItem(key))
+  } catch {
+    // Browsers can block storage. Consent cleanup must remain best-effort and non-fatal.
+  }
+
+  const cookieNames = document.cookie
+    .split(';')
+    .map((cookie) => cookie.trim().split('=')[0])
+    .filter((name) => isPostHogBrowserStorageKey(name, projectKey))
+  const hostname = window.location.hostname
+  for (const name of cookieNames) {
+    document.cookie = `${name}=; Max-Age=0; Path=/; SameSite=Lax; Secure`
+    if (hostname) {
+      document.cookie = `${name}=; Max-Age=0; Path=/; Domain=${hostname}; SameSite=Lax; Secure`
+      document.cookie = `${name}=; Max-Age=0; Path=/; Domain=.${hostname}; SameSite=Lax; Secure`
+    }
+  }
+}
+
+export function isPostHogBrowserStorageKey(key: string, projectKey: string): boolean {
+  return key.includes(projectKey) && (key.startsWith('ph_') || key.startsWith('__ph_'))
+}
+
+export function replayStartDelay(eligibleAt: number | null, now = Date.now()): number {
+  if (!eligibleAt || !Number.isFinite(eligibleAt)) return REPLAY_MINIMUM_DURATION_MS
+  return Math.max(0, eligibleAt - now)
+}
+
+function cancelSessionReplay(clearEligibility: boolean): void {
+  if (replayStartTimer) {
+    globalThis.clearTimeout(replayStartTimer)
+    replayStartTimer = null
+  }
+  if (clearEligibility) {
+    try {
+      window.sessionStorage.removeItem(REPLAY_ELIGIBLE_AT_KEY)
+    } catch {
+      // Session storage is optional; replay still remains consent-gated.
+    }
+  }
+  posthogClient?.stopSessionRecording()
+}
+
+function scheduleSessionReplay(client: AnalyticsProvider): void {
+  if (!replayGranted || replayStartTimer) return
+
+  let eligibleAt: number | null = null
+  try {
+    const stored = Number(window.sessionStorage.getItem(REPLAY_ELIGIBLE_AT_KEY))
+    eligibleAt = Number.isFinite(stored) && stored > 0
+      ? stored
+      : Date.now() + REPLAY_MINIMUM_DURATION_MS
+    window.sessionStorage.setItem(REPLAY_ELIGIBLE_AT_KEY, String(eligibleAt))
+  } catch {
+    eligibleAt = Date.now() + REPLAY_MINIMUM_DURATION_MS
+  }
+
+  const start = () => {
+    replayStartTimer = null
+    if (analyticsGranted && replayGranted && posthogClient === client) {
+      client.startSessionRecording({ sampling: true })
+    }
+  }
+  const delay = replayStartDelay(eligibleAt)
+  if (delay === 0) start()
+  else replayStartTimer = globalThis.setTimeout(start, delay)
+}
+
+async function loadPostHog(projectKey: string, apiHost: string): Promise<void> {
+  if (isLoading || posthogClient || !analyticsGranted) return
+  isLoading = true
+
+  try {
+    const [{ default: posthog }, { SessionReplayExtensions, SurveysExtensions }] = await Promise.all([
+      import('posthog-js/dist/module.slim'),
+      import('posthog-js/dist/extension-bundles'),
+    ])
+
+    if (!analyticsGranted) return
+
+    posthog.init(projectKey, createPostHogConfig(apiHost, {
+      extensionClasses: {
+        ...SessionReplayExtensions,
+        ...SurveysExtensions,
+      },
+      surveysEnabled: context?.pageType !== 'privacy',
+    }))
+
+    posthog.reset()
+    posthog.opt_in_capturing({ captureEventName: false })
 
     posthogClient = posthog
+    if (replayGranted) scheduleSessionReplay(posthog)
+
     const pendingEvents = queue
     queue = []
     pendingEvents.forEach(capture)
   } catch {
     isUnavailable = true
     queue = []
+  } finally {
+    isLoading = false
   }
 }
 
@@ -185,41 +338,89 @@ function schedulePostHogLoad(projectKey: string, apiHost: string): void {
   globalThis.setTimeout(load, 0)
 }
 
+function analyticsEnvironment(): {
+  enabled: string | undefined
+  projectKey: string | undefined
+  apiHost: string | undefined
+} {
+  return {
+    enabled: import.meta.env.VITE_POSTHOG_ENABLED,
+    projectKey: import.meta.env.VITE_POSTHOG_KEY,
+    apiHost: import.meta.env.VITE_POSTHOG_HOST,
+  }
+}
+
+function disableAnalytics(projectKey: string | undefined): void {
+  analyticsGranted = false
+  replayGranted = false
+  pageViewTracked = false
+  queue = []
+
+  cancelSessionReplay(true)
+
+  if (posthogClient) {
+    try {
+      posthogClient.opt_out_capturing()
+      posthogClient.reset(true)
+    } catch {
+      // Cleanup continues below even when a browser extension blocks the SDK.
+    }
+  }
+
+  if (projectKey) clearPostHogBrowserStorage(projectKey)
+}
+
+function applyConsent(preferences: ConsentPreferences | null): void {
+  const { enabled, projectKey, apiHost } = analyticsEnvironment()
+  const doNotTrack = isDoNotTrackEnabled()
+  const hasConsent = hasAnalyticsConsent(preferences, doNotTrack)
+
+  if (!hasConsent) {
+    disableAnalytics(projectKey)
+    return
+  }
+
+  if (!hasAnalyticsConfig(enabled, projectKey, apiHost, false)) {
+    isUnavailable = true
+    return
+  }
+
+  analyticsGranted = true
+  replayGranted = hasReplayConsent(preferences, doNotTrack)
+
+  if (!pageViewTracked) {
+    pageViewTracked = true
+    track('page_viewed', {})
+  }
+
+  if (posthogClient) {
+    if (replayGranted) scheduleSessionReplay(posthogClient)
+    else cancelSessionReplay(true)
+    return
+  }
+
+  schedulePostHogLoad(projectKey!, apiHost!)
+}
+
 export function initAnalytics(pageContext: PageContext): void {
   if (isInitialized) return
   isInitialized = true
   context = pageContext
   source = captureBrowserAttribution()
   pagePath = window.location.pathname
+  currentPreferences = getConsentPreferences()
 
-  const enabled = import.meta.env.VITE_POSTHOG_ENABLED
-  const projectKey = import.meta.env.VITE_POSTHOG_KEY
-  const apiHost = import.meta.env.VITE_POSTHOG_HOST
+  subscribeToConsent((preferences) => {
+    const wasCollecting = Boolean(currentPreferences?.analytics)
+    currentPreferences = preferences
+    applyConsent(preferences)
 
-  if (!enabled || !projectKey || !apiHost) {
-    isUnavailable = true
-
-    if (import.meta.env.DEV) {
-      const missingVariable = !enabled
-        ? 'VITE_POSTHOG_ENABLED'
-        : !projectKey
-          ? 'VITE_POSTHOG_KEY'
-          : 'VITE_POSTHOG_HOST'
-      throw new Error(
-        `${missingVariable} variable required by PostHog is missing or un-configured, this causes events to be silently missed. This error stops appearing once ${missingVariable} is configured`,
-      )
+    if (wasCollecting && !preferences.analytics) {
+      globalThis.setTimeout(() => window.location.reload(), 0)
     }
+  })
 
-    return
-  }
-
-  if (!hasAnalyticsConfig(enabled, projectKey, apiHost, isDoNotTrackEnabled())) {
-    isUnavailable = true
-    return
-  }
-
-  track('page_viewed', {})
-  schedulePostHogLoad(projectKey, apiHost)
+  applyConsent(currentPreferences)
 }
 
 export function trackResumeDownload(location: string): void {
