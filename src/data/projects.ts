@@ -241,9 +241,20 @@ export const PROJECTS = [
     status: 'Site institucional',
     category: 'Marca e catálogo',
     summary: 'Presença digital para uma charcutaria artesanal, com catálogo, produto em modal e pedido pelo WhatsApp.',
-    featured: false,
-    details:
-      'Site institucional autoral para a Brutona, reunindo narrativa de marca, catálogo com filtros, detalhes de produtos, fotos oficiais, vídeos, FAQ, localização e chamadas diretas para pedido via WhatsApp.',
+    featured: true,
+    cover: projectImage(
+      'brutona',
+      'Hero do site Brutona Charcutaria Artesanal com fotografia de tábua de produtos e chamada principal',
+    ),
+    problem:
+      'A marca precisava apresentar personalidade, autoridade artesanal e catálogo sem transformar a experiência em um e-commerce genérico.',
+    solution:
+      'Um site institucional com narrativa de marca, catálogo filtrável, modal de produto, mídia oficial e CTA direto para pedido no WhatsApp.',
+    highlights: [
+      'Home editorial com manifesto, processo, história da fundadora e localização.',
+      'Catálogo com filtros, detalhes em modal, fotos oficiais e produtos destacados.',
+      'SEO, sitemap, Open Graph, acessibilidade e fluxo de pedido via WhatsApp.',
+    ],
     stack: ['Next.js', 'TypeScript', 'React', 'Tailwind CSS', 'Vercel'],
     links: [
       {
@@ -252,6 +263,26 @@ export const PROJECTS = [
         primary: true,
       },
     ],
+    caseStudy: {
+      slug: 'brutona',
+      role: 'Desenvolvimento da presença institucional, organização do catálogo, tratamento dos assets oficiais e preparação para publicação.',
+      contributions: [
+        'Estruturação da landing, do catálogo e dos modais de produto em uma experiência responsiva.',
+        'Integração de fotos, logos, vídeos, FAQ, localização e chamadas para WhatsApp.',
+        'Preparação de SEO, sitemap, metadados sociais, testes e build para hospedagem na Vercel.',
+      ],
+      architecture: [
+        { label: 'Next.js e React', detail: 'Rotas da home, catálogo e componentes interativos.' },
+        { label: 'Conteúdo versionado', detail: 'Produtos, FAQ, marca, mídia oficial e contatos em arquivos de dados.' },
+        { label: 'WhatsApp', detail: 'Links de pedido com mensagens pré-preenchidas para conversão.' },
+        { label: 'Vercel', detail: 'Build e publicação da aplicação web.' },
+      ],
+      decisions: [
+        'Priorizar uma experiência institucional forte antes de adicionar carrinho ou checkout.',
+        'Manter catálogo e textos desacoplados da interface para facilitar atualização comercial.',
+        'Usar assets oficiais e fallbacks controlados para preservar a identidade visual da marca.',
+      ],
+    },
   },
   {
     id: 'vm-viagens',
@@ -259,9 +290,20 @@ export const PROJECTS = [
     status: 'Landing editorial',
     category: 'Turismo',
     summary: 'Landing responsiva com destinos compartilháveis e planejador de viagem integrado ao WhatsApp.',
-    featured: false,
-    details:
-      'Landing page para agência de viagens com hero editorial, destinos com rotas compartilháveis, metadata própria, SEO estruturado, planejador guiado e geração de mensagem natural para atendimento pelo WhatsApp.',
+    featured: true,
+    cover: projectImage(
+      'vm-viagens',
+      'Hero da landing VM Viagens com fotografia de praia, navegação superior e chamada para planejar viagem',
+    ),
+    problem:
+      'A agência precisava comunicar atendimento consultivo e transformar interesses de viagem em conversas qualificadas, sem depender de ofertas provisórias.',
+    solution:
+      'Uma landing editorial com destinos compartilháveis, SEO estruturado e planejador guiado que gera mensagens naturais para WhatsApp.',
+    highlights: [
+      'Hero editorial, manifesto, destinos, serviços, diferenciais e privacidade.',
+      'Rotas compartilháveis para destinos com metadados sociais próprios.',
+      'Planejador integrado ao WhatsApp para orientar o primeiro atendimento.',
+    ],
     stack: ['Next.js', 'TypeScript', 'React', 'Tailwind CSS', 'Vercel'],
     links: [
       {
@@ -270,6 +312,26 @@ export const PROJECTS = [
         primary: true,
       },
     ],
+    caseStudy: {
+      slug: 'vm-viagens',
+      role: 'Criação da experiência editorial, modelagem dos destinos, SEO das rotas e desenvolvimento do planejador conectado ao WhatsApp.',
+      contributions: [
+        'Desenvolvimento da landing responsiva com navegação, seções comerciais e mídia editorial.',
+        'Criação das rotas de destino com URL compartilhável, canonical, Open Graph e JSON-LD.',
+        'Implementação do planejador guiado para montar mensagens naturais de atendimento.',
+      ],
+      architecture: [
+        { label: 'Next.js App Router', detail: 'Landing, privacidade e destinos compartilháveis.' },
+        { label: 'Repositories de conteúdo', detail: 'Dados comerciais separados dos componentes de interface.' },
+        { label: 'SEO estruturado', detail: 'Canonical, sitemap, robots, Open Graph e JSON-LD.' },
+        { label: 'WhatsApp', detail: 'Planejador gera uma mensagem inicial para o atendimento humano.' },
+      ],
+      decisions: [
+        'Ocultar conteúdo provisório da publicação pública até haver material autorizado.',
+        'Tratar destinos como registros compartilháveis em vez de cards puramente estáticos.',
+        'Direcionar a conversão para conversa assistida, mais adequada ao serviço de concierge.',
+      ],
+    },
   },
   {
     id: 'automacao-emails',

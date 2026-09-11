@@ -23,7 +23,7 @@ async function generateWebpVariants(relativePath, outputBaseName, widths) {
   return source
 }
 
-for (const project of ['convites', 'estoque', 'zd-signature']) {
+for (const project of ['convites', 'estoque', 'zd-signature', 'brutona', 'vm-viagens']) {
   const relativePath = `projects/${project}.webp`
   const source = await generateWebpVariants(relativePath, `projects/${project}`, [480, 800])
   await sharp(source)

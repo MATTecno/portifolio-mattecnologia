@@ -12,6 +12,8 @@ export default defineConfig({
         projectInvites: resolve(import.meta.dirname, 'projetos/convites/index.html'),
         projectInventory: resolve(import.meta.dirname, 'projetos/estoque/index.html'),
         projectSignature: resolve(import.meta.dirname, 'projetos/zd-signature-input/index.html'),
+        projectBrutona: resolve(import.meta.dirname, 'projetos/brutona/index.html'),
+        projectVmTravel: resolve(import.meta.dirname, 'projetos/vm-viagens/index.html'),
         projectPos: resolve(import.meta.dirname, 'projetos/pdv/index.html'),
         privacy: resolve(import.meta.dirname, 'privacidade/index.html'),
       },

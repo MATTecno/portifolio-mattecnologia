@@ -5,9 +5,12 @@ import {
   SUPPORTING_PROJECTS,
   getProjectCasePath,
   isCaseStudyProject,
+  type ProjectLink,
   type SupportingProject,
 } from '../data/projects'
 import { getProjectDestination, trackProject } from '../lib/analytics'
+
+const getSupportingProjectLinks = (project: SupportingProject): readonly ProjectLink[] => project.links
 
 export default function Projetos() {
   const [open, setOpen] = useState<SupportingProject | null>(null)
@@ -187,9 +190,9 @@ export default function Projetos() {
                   Ver detalhes
                 </button>
               )}
-              {!isCaseStudyProject(project) && project.links.length > 0 && (
+              {!isCaseStudyProject(project) && getSupportingProjectLinks(project).length > 0 && (
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {project.links.map((link) => (
+                  {getSupportingProjectLinks(project).map((link) => (
                     <a
                       key={link.href}
                       href={link.href}

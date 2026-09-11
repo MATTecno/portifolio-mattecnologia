@@ -92,46 +92,8 @@ export const RECRUITER_PROJECTS: readonly RecruiterProject[] = [
   toRecruiterProject('zd-signature-input'),
   toRecruiterProject('estoque-desktop'),
   toRecruiterProject('pdv'),
-  {
-    id: 'brutona',
-    title: 'Brutona — Charcutaria Artesanal',
-    category: 'Site institucional',
-    status: 'Marca e catálogo',
-    summary:
-      'Site institucional com catálogo filtrável, modal de produtos, narrativa de marca, assets oficiais e pedidos pelo WhatsApp.',
-    contributions: [
-      'Organização do conteúdo da marca em uma experiência responsiva e orientada a conversão.',
-      'Estruturação de catálogo, filtros, modal de produto, FAQ, localização e SEO para publicação.',
-    ],
-    stack: ['Next.js', 'TypeScript', 'React', 'Tailwind CSS', 'Vercel'],
-    links: [
-      {
-        label: 'Domínio de referência',
-        href: 'https://brutonacharcutaria.com.br',
-      },
-    ],
-    featured: false,
-  },
-  {
-    id: 'vm-viagens',
-    title: 'VM Viagens — Concierge de viagens',
-    category: 'Turismo',
-    status: 'Landing editorial',
-    summary:
-      'Landing responsiva com destinos compartilháveis, SEO estruturado e planejador de viagem conectado ao WhatsApp.',
-    contributions: [
-      'Criação da experiência editorial com rotas de destino e metadata social própria.',
-      'Desenvolvimento do planejador guiado para gerar mensagens naturais de atendimento.',
-    ],
-    stack: ['Next.js', 'TypeScript', 'React', 'Tailwind CSS', 'Vercel'],
-    links: [
-      {
-        label: 'Domínio de referência',
-        href: 'https://vmconcierge.com.br',
-      },
-    ],
-    featured: false,
-  },
+  toRecruiterProject('brutona'),
+  toRecruiterProject('vm-viagens'),
   {
     id: 'android-barcode',
     title: 'Aplicativo Android para leitura de código de barras',

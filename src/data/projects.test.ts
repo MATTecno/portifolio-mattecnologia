@@ -14,8 +14,8 @@ describe('catálogo de projetos', () => {
     expect(new Set(ids).size).toBe(ids.length)
   })
 
-  it('possui os três cases completos em destaque', () => {
-    expect(FEATURED_PROJECTS).toHaveLength(3)
+  it('possui os cinco cases completos em destaque', () => {
+    expect(FEATURED_PROJECTS).toHaveLength(5)
 
     for (const project of FEATURED_PROJECTS) {
       expect(project.cover.src).toMatch(/^\/projects\/.+\.webp$/)
@@ -29,12 +29,12 @@ describe('catálogo de projetos', () => {
     }
   })
 
-  it('mantém os quatro cases completos e com slugs únicos', () => {
-    expect(CASE_STUDY_PROJECTS).toHaveLength(4)
+  it('mantém os seis cases completos e com slugs únicos', () => {
+    expect(CASE_STUDY_PROJECTS).toHaveLength(6)
 
     const slugs = CASE_STUDY_PROJECTS.map((project) => project.caseStudy.slug)
     expect(new Set(slugs).size).toBe(slugs.length)
-    expect(slugs).toEqual(['convites', 'estoque', 'zd-signature-input', 'pdv'])
+    expect(slugs).toEqual(['convites', 'estoque', 'zd-signature-input', 'brutona', 'vm-viagens', 'pdv'])
 
     for (const project of CASE_STUDY_PROJECTS) {
       expect(project.problem.length).toBeGreaterThan(20)

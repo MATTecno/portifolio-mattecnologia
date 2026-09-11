@@ -33,11 +33,11 @@ describe('dados profissionais para recrutadores', () => {
     expect(new Set(projectIds).size).toBe(projectIds.length)
   })
 
-  it('possui quatro projetos principais e três capturas reais', () => {
-    expect(FEATURED_RECRUITER_PROJECTS).toHaveLength(4)
+  it('possui seis projetos principais e cinco capturas reais', () => {
+    expect(FEATURED_RECRUITER_PROJECTS).toHaveLength(6)
 
     const illustratedProjects = FEATURED_RECRUITER_PROJECTS.filter((project) => project.cover)
-    expect(illustratedProjects).toHaveLength(3)
+    expect(illustratedProjects).toHaveLength(5)
 
     for (const project of illustratedProjects) {
       expect(project.cover?.src).toMatch(/^\/projects\/.+\.webp$/)
@@ -45,7 +45,7 @@ describe('dados profissionais para recrutadores', () => {
     }
   })
 
-  it('referencia o catálogo canônico nos quatro projetos principais', () => {
+  it('referencia o catálogo canônico nos projetos principais', () => {
     for (const recruiterProject of FEATURED_RECRUITER_PROJECTS) {
       const catalogProject = getProjectById(recruiterProject.id)
 
