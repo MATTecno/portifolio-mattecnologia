@@ -187,6 +187,27 @@ export default function Projetos() {
                   Ver detalhes
                 </button>
               )}
+              {!isCaseStudyProject(project) && project.links.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {project.links.map((link) => (
+                    <a
+                      key={link.href}
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => trackProject(
+                        project.id,
+                        getProjectDestination(link.href),
+                        'commercial_supporting_projects',
+                      )}
+                      className="inline-flex items-center gap-2 self-start rounded-mdplus border border-white/15 px-3 py-2 text-sm transition hover:bg-white/5"
+                    >
+                      {link.label}
+                      <FaArrowUpRightFromSquare aria-hidden="true" className="text-xs" />
+                    </a>
+                  ))}
+                </div>
+              )}
             </article>
           ))}
         </div>
@@ -228,6 +249,31 @@ export default function Projetos() {
                 </span>
               ))}
             </div>
+            {open.links.length > 0 && (
+              <div className="mt-6 flex flex-wrap gap-3">
+                {open.links.map((link) => (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => trackProject(
+                      open.id,
+                      getProjectDestination(link.href),
+                      'commercial_supporting_projects_modal',
+                    )}
+                    className={
+                      link.primary
+                        ? 'inline-flex items-center gap-2 rounded-mdplus bg-primary px-4 py-2.5 text-sm font-medium shadow-glow transition hover:brightness-110'
+                        : 'inline-flex items-center gap-2 rounded-mdplus border border-white/15 px-4 py-2.5 text-sm transition hover:bg-white/5'
+                    }
+                  >
+                    {link.label}
+                    <FaArrowUpRightFromSquare aria-hidden="true" className="text-xs" />
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}

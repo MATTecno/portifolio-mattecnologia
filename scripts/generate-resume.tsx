@@ -279,6 +279,9 @@ function ResumeDocument() {
             <View key={project.id} style={styles.compactEntry}>
               <Text style={styles.inlineLabel}>{project.title}</Text>
               <Text>{project.summary}</Text>
+              {project.links.map((link) => (
+                <Link key={link.href} src={link.href} style={styles.contactLink}>{link.label}: {link.href}</Link>
+              ))}
             </View>
           ))}
         </View>

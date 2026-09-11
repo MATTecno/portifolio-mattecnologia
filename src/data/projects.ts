@@ -236,6 +236,42 @@ export const PROJECTS = [
     links: [],
   },
   {
+    id: 'brutona',
+    title: 'Brutona — Charcutaria Artesanal',
+    status: 'Site institucional',
+    category: 'Marca e catálogo',
+    summary: 'Presença digital para uma charcutaria artesanal, com catálogo, produto em modal e pedido pelo WhatsApp.',
+    featured: false,
+    details:
+      'Site institucional autoral para a Brutona, reunindo narrativa de marca, catálogo com filtros, detalhes de produtos, fotos oficiais, vídeos, FAQ, localização e chamadas diretas para pedido via WhatsApp.',
+    stack: ['Next.js', 'TypeScript', 'React', 'Tailwind CSS', 'Vercel'],
+    links: [
+      {
+        label: 'Ver domínio de referência',
+        href: 'https://brutonacharcutaria.com.br',
+        primary: true,
+      },
+    ],
+  },
+  {
+    id: 'vm-viagens',
+    title: 'VM Viagens — Concierge de viagens',
+    status: 'Landing editorial',
+    category: 'Turismo',
+    summary: 'Landing responsiva com destinos compartilháveis e planejador de viagem integrado ao WhatsApp.',
+    featured: false,
+    details:
+      'Landing page para agência de viagens com hero editorial, destinos com rotas compartilháveis, metadata própria, SEO estruturado, planejador guiado e geração de mensagem natural para atendimento pelo WhatsApp.',
+    stack: ['Next.js', 'TypeScript', 'React', 'Tailwind CSS', 'Vercel'],
+    links: [
+      {
+        label: 'Ver domínio de referência',
+        href: 'https://vmconcierge.com.br',
+        primary: true,
+      },
+    ],
+  },
+  {
     id: 'automacao-emails',
     title: 'Automação de E-mails Corporativos',
     status: 'Automação',
