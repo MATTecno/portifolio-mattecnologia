@@ -54,7 +54,7 @@ A origem explícita mais recente vale durante a aba atual. `origem` é consumido
 | `project_clicked` | Abertura de case, produto ou repositório | `project_id`, `destination`, `location` |
 | `contact_form_submitted` | EmailJS confirmou o envio | `location` |
 
-Todos recebem apenas `page_path`, `page_type` e `source` como contexto próprio. Autocapture, pageviews automáticos, heatmaps, performance, erros, dead clicks e rage clicks permanecem desativados. Query strings, hashes, valores do formulário e conteúdo da estimativa não são adicionados aos eventos.
+Todos recebem apenas `page_path`, `page_type` e `source` como contexto próprio. Autocapture, pageviews automáticos, heatmaps, performance, erros, dead clicks e rage clicks permanecem desativados. Query strings, hashes, valores do formulário e conteúdo do briefing não são adicionados aos eventos.
 
 ## Survey de feedback
 
@@ -99,3 +99,9 @@ npm run preview
 ```
 
 Referências: [persistência no JavaScript SDK](https://posthog.com/docs/libraries/js/persistence) e [privacidade do Session Replay](https://posthog.com/docs/session-replay/privacy).
+
+## Briefing comercial
+
+`briefing_started` registra a primeira interação com o briefing; `briefing_completed` registra a escolha de continuar no formulário ou abrir WhatsApp/e-mail após validação. Ambos usam apenas o contexto público e `location: commercial_briefing`, sob o consentimento existente. Conclusão significa preparar/encaminhar o resumo, não confirmar uma contratação nem o recebimento de mensagem externa.
+
+Inputs e resumos usam `.ph-mask`. Links que contêm mensagens codificadas ficam em áreas `.ph-no-capture`. Descrição, recursos, data desejada e conteúdo do resumo não são propriedades dos eventos. Os cliques efetivos nos canais seguem `contact_clicked` e os envios confirmados pelo EmailJS seguem `contact_form_submitted`.

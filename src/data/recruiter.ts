@@ -18,6 +18,11 @@ export type RecruiterExperience = {
   period: string
   sortOrder: number
   highlights: readonly string[]
+  focusAreas?: readonly {
+    title: string
+    context: string
+    contribution: string
+  }[]
 }
 
 export type RecruiterProject = {
@@ -36,7 +41,9 @@ export type RecruiterProject = {
 
 export type RecruiterSkillGroup = {
   title: string
+  description: string
   items: readonly string[]
+  evidence: readonly RecruiterLink[]
 }
 
 export type RecruiterProfile = {
@@ -47,6 +54,8 @@ export type RecruiterProfile = {
   linkedin: string
   github: string
   availability: readonly string[]
+  objective: string
+  coreSkills: readonly string[]
   summary: readonly string[]
   experience: readonly RecruiterExperience[]
   skills: readonly RecruiterSkillGroup[]
@@ -70,7 +79,7 @@ function requireCaseProject(id: string): CaseStudyProject {
   return project
 }
 
-function toRecruiterProject(id: string): RecruiterProject {
+function toRecruiterProject(id: string, featured = false): RecruiterProject {
   const project = requireCaseProject(id)
   return {
     id: project.id,
@@ -81,17 +90,17 @@ function toRecruiterProject(id: string): RecruiterProject {
     contributions: project.caseStudy.contributions,
     stack: project.stack,
     links: project.links.map(({ label, href }) => ({ label, href })),
-    featured: true,
+    featured,
     cover: project.featured ? project.cover : undefined,
     casePath: getProjectCasePath(project),
   }
 }
 
 export const RECRUITER_PROJECTS: readonly RecruiterProject[] = [
-  toRecruiterProject('convites-saas'),
-  toRecruiterProject('zd-signature-input'),
+  toRecruiterProject('zd-signature-input', true),
+  toRecruiterProject('convites-saas', true),
+  toRecruiterProject('pdv', true),
   toRecruiterProject('estoque-desktop'),
-  toRecruiterProject('pdv'),
   toRecruiterProject('brutona'),
   toRecruiterProject('vm-viagens'),
   {
@@ -140,6 +149,8 @@ export const RECRUITER_PROFILE: RecruiterProfile = {
   linkedin: 'https://www.linkedin.com/in/marcelo-diogo-05289b264',
   github: 'https://github.com/MATTecno',
   availability: ['Remoto', 'Híbrido', 'Presencial em Belo Horizonte'],
+  objective: 'Busco oportunidades como Desenvolvedor Full Stack ou Backend PHP, nos níveis Júnior e Pleno, com contratação CLT ou PJ.',
+  coreSkills: ['PHP', 'TypeScript', 'Vue.js', 'Oracle', 'PostgreSQL', 'APIs REST'],
   summary: [
     'Desenvolvedor Full Stack com experiência no desenvolvimento e na manutenção de sistemas corporativos, módulos, interfaces, APIs REST e integrações com bancos Oracle e PostgreSQL.',
     'Atuação em análise de regras de negócio, correção de problemas de produção, refinamento de requisitos com clientes e equipes internas, decisões técnicas e revisão de código.',
@@ -153,11 +164,24 @@ export const RECRUITER_PROFILE: RecruiterProfile = {
       sortOrder: 2025,
       highlights: [
         'Desenvolvimento e manutenção de sistemas corporativos com PHP, TypeScript, Vue.js, Oracle e PostgreSQL.',
-        'Implementação de módulos, telas, regras de negócio e integrações por APIs REST.',
-        'Investigação e correção de bugs críticos, incluindo problemas identificados em produção.',
-        'Levantamento e refinamento de requisitos com clientes e equipes internas.',
-        'Criação e otimização de consultas SQL, procedures e rotinas de banco de dados.',
         'Participação em decisões técnicas, Code Reviews, validação de entregas e integração de novos colaboradores.',
+      ],
+      focusAreas: [
+        {
+          title: 'Sustentação de sistemas em produção',
+          context: 'Problemas críticos identificados durante o uso dos sistemas corporativos.',
+          contribution: 'Investigação e correção de bugs, com participação na validação das entregas.',
+        },
+        {
+          title: 'Consultas e regras no banco de dados',
+          context: 'Sistemas corporativos integrados a bancos Oracle e PostgreSQL.',
+          contribution: 'Criação e otimização de consultas SQL, procedures e rotinas de banco de dados.',
+        },
+        {
+          title: 'Requisitos, módulos e integrações',
+          context: 'Demandas de clientes e equipes internas para evolução dos sistemas.',
+          contribution: 'Levantamento e refinamento de requisitos, implementação de telas, regras de negócio e integrações por APIs REST.',
+        },
       ],
     },
     {
@@ -175,14 +199,29 @@ export const RECRUITER_PROFILE: RecruiterProfile = {
     },
   ],
   skills: [
-    { title: 'Linguagens', items: ['PHP', 'TypeScript', 'JavaScript', 'Java', 'SQL', 'C#'] },
-    { title: 'Frontend', items: ['Vue.js', 'React', 'Tailwind CSS', 'Vuetify'] },
-    { title: 'Backend', items: ['PHP', 'Laravel', 'APIs REST', '.NET'] },
-    { title: 'Bancos de dados', items: ['Oracle', 'PostgreSQL', 'MySQL', 'Supabase', 'SQLite'] },
-    { title: 'Ferramentas', items: ['Docker', 'Git', 'GitHub', 'Postman', 'AWS', 'Vercel', 'NPM'] },
     {
-      title: 'Práticas',
-      items: ['Arquitetura de Software', 'Clean Code', 'SOLID', 'Code Review', 'Scrum', 'Kanban'],
+      title: 'Uso profissional',
+      description: 'Tecnologias e práticas presentes na atuação com sistemas corporativos na Teknisa.',
+      items: ['PHP', 'TypeScript', 'Vue.js', 'Oracle', 'PostgreSQL', 'SQL', 'APIs REST', 'Git', 'Code Review'],
+      evidence: [{ label: 'Experiência na Teknisa', href: '#experiencia' }],
+    },
+    {
+      title: 'Aplicadas em projetos',
+      description: 'Tecnologias utilizadas nos produtos e componentes apresentados neste portfólio.',
+      items: ['React', 'Laravel', 'Supabase', 'C# / .NET', 'SQLite', 'Docker', 'Vuetify', 'Zeedhi', 'NPM', 'GitHub', 'Vercel', 'Tailwind CSS', 'Java / Android'],
+      evidence: [
+        { label: 'ZdSignatureInput', href: '/projetos/zd-signature-input/' },
+        { label: 'Convites', href: '/projetos/convites/' },
+        { label: 'PDV', href: '/projetos/pdv/' },
+        { label: 'Estoque Desktop', href: '/projetos/estoque/' },
+        { label: 'Outros projetos', href: '#outros-projetos' },
+      ],
+    },
+    {
+      title: 'Conhecimentos complementares',
+      description: 'Conhecimentos que complementam a atuação e os estudos em desenvolvimento de software.',
+      items: ['JavaScript', 'MySQL', 'Postman', 'AWS', 'Arquitetura de Software', 'Clean Code', 'SOLID', 'Scrum', 'Kanban'],
+      evidence: [],
     },
   ],
   education: {

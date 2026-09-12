@@ -10,7 +10,7 @@ import {
 export type PageType = 'commercial' | 'recruiter' | 'case' | 'privacy'
 export type ContactChannel = 'whatsapp' | 'email' | 'linkedin'
 export type ProfilePlatform = 'github'
-export type ProjectDestination = 'case' | 'live' | 'github' | 'npm'
+export type ProjectDestination = 'case' | 'live' | 'github' | 'npm' | 'demo'
 
 export type PageContext = {
   pageType: PageType
@@ -42,6 +42,8 @@ export type AnalyticsEvent =
       }
     }
   | { name: 'contact_form_submitted'; properties: BaseEventProperties & { location: string } }
+  | { name: 'briefing_started'; properties: BaseEventProperties & { location: string } }
+  | { name: 'briefing_completed'; properties: BaseEventProperties & { location: string } }
 
 type EventName = AnalyticsEvent['name']
 type AnalyticsProvider = {
@@ -60,6 +62,8 @@ type EventDetails = {
   profile_clicked: { platform: ProfilePlatform; location: string }
   project_clicked: { project_id: string; destination: ProjectDestination; location: string }
   contact_form_submitted: { location: string }
+  briefing_started: { location: string }
+  briefing_completed: { location: string }
 }
 
 const PRIVATE_PROVIDER_PROPERTIES = [
@@ -425,6 +429,10 @@ export function trackProject(
 
 export function trackContactFormSubmitted(location: string): void {
   track('contact_form_submitted', { location })
+}
+
+export function trackBriefing(stage: 'started' | 'completed'): void {
+  track(stage === 'started' ? 'briefing_started' : 'briefing_completed', { location: 'commercial_briefing' })
 }
 
 export function getProjectDestination(href: string): Exclude<ProjectDestination, 'case'> {

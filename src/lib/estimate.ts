@@ -1,103 +1,84 @@
-export const BASE_DAY_RATE = 100
+import { getProjectById } from '../data/projects'
 
-export const PROJECT_CONFIG = {
-  landing: { label: 'Landing', days: [3, 6], priceWeight: 1 },
-  web_simples: { label: 'Web simples', days: [10, 15], priceWeight: 1.25 },
-  web_completo: { label: 'SaaS / sistema completo', days: [20, 35], priceWeight: 1.4 },
-  mobile: { label: 'Mobile', days: [20, 35], priceWeight: 1.6 },
-  web_mobile: { label: 'Web + Mobile', days: [30, 50], priceWeight: 1.8 },
+export const PROJECT_OPTIONS = {
+  orientacao: 'Não sei / preciso de orientação',
+  site: 'Site ou página de apresentação',
+  web: 'Sistema web',
+  desktop: 'Aplicação desktop',
+  mobile: 'Aplicativo mobile',
+  web_mobile: 'Web e mobile',
+  automacao: 'Automação e integração',
+  evolucao: 'Evolução de um sistema existente',
 } as const
 
-export const SIZE_CONFIG = {
-  essencial: { label: 'Essencial', detail: '1–5 telas', effortWeight: 1 },
-  medio: { label: 'Médio', detail: '6–12 telas', effortWeight: 1.2 },
-  amplo: { label: 'Amplo', detail: '13–25 telas', effortWeight: 1.4 },
-  grande: { label: 'Grande', detail: '26+ telas', effortWeight: 1.7 },
+export const FEATURE_OPTIONS = {
+  usuarios: 'Acesso de usuários',
+  dados: 'Painel e dados',
+  integracoes: 'Integrações',
+  pagamentos: 'Pagamentos',
+  arquivos: 'Arquivos e uploads',
+  offline: 'Funcionamento offline',
 } as const
 
-export const FEATURE_CONFIG = {
-  login: { label: 'Login e perfis', priceWeight: 1.15 },
-  dados: { label: 'Dados e painel', priceWeight: 1.25 },
-  integracoes: { label: 'Integrações', priceWeight: 1.15 },
-  pagamentos: { label: 'Pagamentos', priceWeight: 1.25 },
-  arquivos: { label: 'Arquivos e uploads', priceWeight: 1.1 },
-} as const
-
-export const URGENCY_CONFIG = {
-  normal: { label: 'Normal', priceWeight: 1, scheduleWeight: 1 },
-  acelerada: { label: 'Acelerada', priceWeight: 1.25, scheduleWeight: 0.8 },
-  critica: { label: 'Crítica', priceWeight: 1.5, scheduleWeight: 0.65 },
-} as const
-
-export type ProjectType = keyof typeof PROJECT_CONFIG
-export type ProjectSize = keyof typeof SIZE_CONFIG
-export type ProjectFeature = keyof typeof FEATURE_CONFIG
-export type ProjectUrgency = keyof typeof URGENCY_CONFIG
-
-export type EstimateInput = {
-  project: ProjectType
-  size: ProjectSize
-  features: readonly ProjectFeature[]
-  urgency: ProjectUrgency
+export type ProjectBriefing = {
+  project: keyof typeof PROJECT_OPTIONS
+  description: string
+  features: (keyof typeof FEATURE_OPTIONS)[]
+  deadline: 'undefined' | 'date'
+  desiredDate: string
 }
+export type ProjectReference = { id: string; title: string }
 
-export type EstimateResult = {
-  effortDays: [min: number, max: number]
-  scheduleDays: [min: number, max: number]
-  price: [min: number, max: number]
-}
-
-export const DEFAULT_ESTIMATE_INPUT: EstimateInput = {
-  project: 'web_simples',
-  size: 'medio',
+export const EMPTY_BRIEFING: ProjectBriefing = {
+  project: 'orientacao',
+  description: '',
   features: [],
-  urgency: 'normal',
+  deadline: 'undefined',
+  desiredDate: '',
 }
 
-export function calculateEstimate(input: EstimateInput): EstimateResult {
-  const project = PROJECT_CONFIG[input.project]
-  const size = SIZE_CONFIG[input.size]
-  const urgency = URGENCY_CONFIG[input.urgency]
-  const featureWeight = input.features.reduce(
-    (weight, feature) => weight * FEATURE_CONFIG[feature].priceWeight,
-    1,
-  )
-
-  const effortDays: [number, number] = [
-    Math.round(project.days[0] * size.effortWeight),
-    Math.round(project.days[1] * size.effortWeight),
-  ]
-  const scheduleDays: [number, number] = [
-    Math.max(1, Math.ceil(effortDays[0] * urgency.scheduleWeight)),
-    Math.max(1, Math.ceil(effortDays[1] * urgency.scheduleWeight)),
-  ]
-  const totalPriceWeight = project.priceWeight * featureWeight * urgency.priceWeight
-  const price: [number, number] = [
-    Math.round(effortDays[0] * BASE_DAY_RATE * totalPriceWeight),
-    Math.round(effortDays[1] * BASE_DAY_RATE * totalPriceWeight),
-  ]
-
-  return { effortDays, scheduleDays, price }
+export function getProjectReference(url: URL): ProjectReference | undefined {
+  const id = url.searchParams.get('projeto')
+  const project = id ? getProjectById(id) : undefined
+  return project ? { id: project.id, title: project.title } : undefined
 }
 
-export function formatBRL(value: number) {
-  return value.toLocaleString('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    maximumFractionDigits: 0,
-  })
+export function validateBriefing(briefing: ProjectBriefing): string | null {
+  if (briefing.description.length > 2000) return 'Descreva a necessidade em até 2.000 caracteres.'
+  if (briefing.deadline === 'date') {
+    const date = briefing.desiredDate
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return 'Informe a data desejada ou selecione “Sem data definida”.'
+    const parsed = new Date(`${date}T12:00:00Z`)
+    if (!Number.isFinite(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== date)
+      return 'Informe uma data válida.'
+  }
+  return null
 }
 
-export function formatEstimateSummary(input: EstimateInput, result: EstimateResult) {
-  const featureLabels = input.features.map((feature) => FEATURE_CONFIG[feature].label)
-
+export function formatBriefing(briefing: ProjectBriefing): string {
+  const date =
+    briefing.deadline === 'date' && briefing.desiredDate
+      ? briefing.desiredDate.split('-').reverse().join('/')
+      : 'A definir'
   return [
-    'Estimativa inicial — MATTecnologia',
-    `Projeto: ${PROJECT_CONFIG[input.project].label}`,
-    `Tamanho: ${SIZE_CONFIG[input.size].label} (${SIZE_CONFIG[input.size].detail})`,
-    `Recursos: ${featureLabels.length ? featureLabels.join(', ') : 'Nenhum adicional'}`,
-    `Urgência: ${URGENCY_CONFIG[input.urgency].label}`,
-    `Prazo estimado: ${result.scheduleDays[0]}–${result.scheduleDays[1]} dias`,
-    `Faixa estimada: ${formatBRL(result.price[0])} a ${formatBRL(result.price[1])}`,
+    'Resumo do projeto',
+    `Necessidade: ${PROJECT_OPTIONS[briefing.project]}`,
+    `Descrição: ${briefing.description.trim() || 'A definir'}`,
+    `Recursos: ${briefing.features.length ? briefing.features.map((feature) => FEATURE_OPTIONS[feature]).join(', ') : 'A definir'}`,
+    `Data desejada: ${date}${date !== 'A definir' ? ' (preferência, a confirmar após análise)' : ''}`,
   ].join('\n')
+}
+
+export function composeContactMessage(
+  message: string,
+  briefing?: ProjectBriefing,
+  reference?: ProjectReference,
+): string {
+  return [
+    reference ? `Projeto de referência: ${reference.title}` : '',
+    briefing ? formatBriefing(briefing) : '',
+    message.trim(),
+  ]
+    .filter(Boolean)
+    .join('\n\n')
 }

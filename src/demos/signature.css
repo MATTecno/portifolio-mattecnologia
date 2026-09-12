@@ -1,0 +1,35 @@
+html { color-scheme: light; }
+body { margin: 0; }
+.signature-demo { min-height: 100vh; padding: 24px; color: #0f172a; background: #f8fafc; font-family: system-ui, sans-serif; }
+.signature-demo nav, .signature-demo header, .workspace, .feedback { max-width: 1080px; margin: 0 auto; }
+.signature-demo nav { display: flex; flex-wrap: wrap; gap: 20px; padding-bottom: 24px; }
+.signature-demo a { color: #1d4ed8; }
+.signature-demo h1 { font-size: 26px; line-height: 1.25; margin: 8px 0 12px; }
+.signature-demo h2 { font-size: 18px; margin-bottom: 12px; }
+.signature-demo p { line-height: 1.6; }
+.signature-demo .eyebrow { color: #1d4ed8; font-size: 12px; font-weight: 700; letter-spacing: .05em; margin-bottom: 0; }
+.workspace { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: 20px; padding-top: 20px; }
+.panel { min-width: 0; background: white; border: 1px solid #cbd5e1; border-radius: 12px; padding: 20px; }
+.hint { color: #475569; font-size: 14px; }
+.color-control { display: flex; align-items: center; gap: 12px; font-size: 14px; margin-bottom: 20px; }
+.color-control select { border: 1px solid #94a3b8; border-radius: 6px; padding: 8px 28px 8px 12px; appearance: auto; }
+.preview { min-height: 166px; display: grid; place-items: center; border: 1px dashed #94a3b8; border-radius: 8px; padding: 12px; background: #f8fafc; color: #475569; }
+.preview img { display: block; max-width: 100%; max-height: 180px; }
+.preview p { font-size: 14px; margin: 0; }
+.signature-demo details { margin-top: 20px; font-size: 14px; }
+.signature-demo summary { cursor: pointer; color: #1d4ed8; font-weight: 600; }
+.signature-demo details .hint { margin-top: 12px; }
+.signature-demo code { display: block; overflow-wrap: anywhere; font-size: 12px; background: #f1f5f9; padding: 8px; }
+.signature-demo details button { margin-top: 12px; background: #1d4ed8; color: white; padding: 10px 12px; border-radius: 6px; }
+.signature-demo button:disabled { opacity: .5; cursor: not-allowed; }
+.signature-demo :focus-visible { outline: 2px solid #1d4ed8; outline-offset: 3px; }
+.signature-demo .zd-signature-input__actions .v-btn { width: 40px; height: 40px; }
+.signature-demo .zd-signature-input__body { grid-template-columns: minmax(0, 1fr) 42px; }
+.feedback { padding-top: 16px; font-size: 14px; color: #166534; }
+.feedback.error { color: #b91c1c; }
+@media (max-width: 639px) {
+  .signature-demo { padding: 16px; }
+  .workspace { grid-template-columns: 1fr; gap: 16px; }
+  .panel { padding: 16px; }
+  .signature-demo h1 { font-size: 23px; }
+}

@@ -1,54 +1,89 @@
 import { describe, expect, it } from 'vitest'
 import {
-  calculateEstimate,
-  DEFAULT_ESTIMATE_INPUT,
-  type EstimateInput,
+  EMPTY_BRIEFING,
+  composeContactMessage,
+  formatBriefing,
+  getProjectReference,
+  validateBriefing,
 } from './estimate'
+import { emailLink, whatsappLink } from './contact'
+import { captureBrowserAttribution } from './attribution'
+import { vi } from 'vitest'
 
-describe('calculateEstimate', () => {
-  it('calcula o cenário padrão definido para o portfólio', () => {
-    expect(calculateEstimate(DEFAULT_ESTIMATE_INPUT)).toEqual({
-      effortDays: [12, 18],
-      scheduleDays: [12, 18],
-      price: [1500, 2250],
-    })
+describe('briefing comercial', () => {
+  it('permite orientação sem escolhas técnicas e sem valores automáticos', () => {
+    expect(validateBriefing(EMPTY_BRIEFING)).toBeNull()
+    const summary = formatBriefing(EMPTY_BRIEFING)
+    expect(summary).toContain('Não sei / preciso de orientação')
+    expect(summary).toContain('Recursos: A definir')
+    expect(summary).not.toMatch(/R\$|dias|Faixa estimada/)
   })
-
-  it('aplica o peso do tamanho ao esforço', () => {
-    expect(calculateEstimate({ ...DEFAULT_ESTIMATE_INPUT, size: 'grande' }).effortDays).toEqual([17, 26])
+  it('inclui desktop, offline e a data como preferência', () => {
+    expect(
+      formatBriefing({
+        ...EMPTY_BRIEFING,
+        project: 'desktop',
+        features: ['offline'],
+        deadline: 'date',
+        desiredDate: '2026-12-18',
+      }),
+    ).toContain('18/12/2026 (preferência, a confirmar após análise)')
+    expect(formatBriefing({ ...EMPTY_BRIEFING, project: 'desktop', features: ['offline'] })).toContain(
+      'Funcionamento offline',
+    )
   })
-
-  it('combina os pesos dos recursos selecionados', () => {
-    const result = calculateEstimate({
-      ...DEFAULT_ESTIMATE_INPUT,
-      features: ['login', 'pagamentos'],
-    })
-
-    expect(result.price).toEqual([2156, 3234])
-  })
-
-  it('reduz o prazo e adiciona o fator de urgência ao preço', () => {
-    const accelerated = calculateEstimate({ ...DEFAULT_ESTIMATE_INPUT, urgency: 'acelerada' })
-    const critical = calculateEstimate({ ...DEFAULT_ESTIMATE_INPUT, urgency: 'critica' })
-
-    expect(accelerated.scheduleDays).toEqual([10, 15])
-    expect(accelerated.price).toEqual([1875, 2813])
-    expect(critical.scheduleDays).toEqual([8, 12])
-    expect(critical.price).toEqual([2250, 3375])
-  })
-
-  it('arredonda esforço, prazo e valor de forma determinística', () => {
-    const input: EstimateInput = {
-      project: 'landing',
-      size: 'amplo',
-      features: ['arquivos'],
-      urgency: 'critica',
+  it('valida datas incompletas ou inexistentes, e o limite de texto', () => {
+    for (const desiredDate of ['', 'invalid', '2026-02-30']) {
+      expect(validateBriefing({ ...EMPTY_BRIEFING, deadline: 'date', desiredDate })).not.toBeNull()
     }
-
-    expect(calculateEstimate(input)).toEqual({
-      effortDays: [4, 8],
-      scheduleDays: [3, 6],
-      price: [660, 1320],
+    expect(validateBriefing({ ...EMPTY_BRIEFING, deadline: 'date', desiredDate: '2028-02-29' })).toBeNull()
+    expect(validateBriefing({ ...EMPTY_BRIEFING, description: 'a'.repeat(2001) })).not.toBeNull()
+  })
+  it('ignora uma data anterior quando o visitante seleciona sem data definida', () => {
+    const briefing = { ...EMPTY_BRIEFING, desiredDate: '2026-01-01' }
+    expect(validateBriefing(briefing)).toBeNull()
+    expect(formatBriefing(briefing)).toContain('Data desejada: A definir')
+  })
+  it('compõe o contexto sem alterar a mensagem original e permite remover partes', () => {
+    const reference = { id: 'estoque-desktop', title: 'Gerenciamento de Estoque Desktop' }
+    const message = 'Já tenho um sistema.\nQuero integração com a operação.'
+    const withContext = composeContactMessage(message, EMPTY_BRIEFING, reference)
+    expect(withContext).toContain('Projeto de referência: Gerenciamento de Estoque Desktop')
+    expect(withContext).toContain(message)
+    expect(composeContactMessage(message)).toBe(message)
+    expect(composeContactMessage(message, undefined, reference)).not.toContain('Resumo do projeto')
+  })
+  it('preserva acentos e quebras de linha nos canais alternativos', () => {
+    const message = composeContactMessage('Integração & estoque?\nDescrição: ação, café.', {
+      ...EMPTY_BRIEFING,
+      description: 'A&B #1',
     })
+    expect(new URL(whatsappLink(message)).searchParams.get('text')).toBe(message)
+    expect(new URL(emailLink(message)).searchParams.get('body')).toBe(message)
+  })
+  it('aceita somente referências do catálogo', () => {
+    expect(getProjectReference(new URL('https://example.com/?projeto=estoque-desktop'))?.id).toBe(
+      'estoque-desktop',
+    )
+    expect(getProjectReference(new URL('https://example.com/?projeto=javascript:alert(1)'))).toBeUndefined()
+    expect(getProjectReference(new URL('https://example.com/?projeto=desconhecido'))).toBeUndefined()
+  })
+  it('mantém a referência capturada antes da limpeza da URL pelas métricas', () => {
+    const url = new URL('https://example.com/?projeto=estoque-desktop&origem=linkedin#contato')
+    const initialReference = getProjectReference(url)
+    const replaceState = vi.fn()
+    vi.stubGlobal('window', {
+      location: { href: url.href, origin: url.origin, pathname: '/', search: url.search, hash: url.hash },
+      history: { state: null, replaceState },
+      sessionStorage: { getItem: () => null, setItem: () => {} },
+    })
+    vi.stubGlobal('document', { referrer: '' })
+    try {
+      expect(captureBrowserAttribution()).toBe('linkedin')
+      expect(replaceState).toHaveBeenCalledWith(null, '', '/#contato')
+      expect(initialReference?.title).toBe('Gerenciamento de Estoque Desktop')
+    } finally {
+      vi.unstubAllGlobals()
+    }
   })
 })

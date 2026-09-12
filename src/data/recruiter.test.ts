@@ -4,6 +4,7 @@ import {
   RECRUITER_PROFILE,
   RECRUITER_PROJECTS,
   RESUME_PHONE,
+  SECONDARY_RECRUITER_PROJECTS,
 } from './recruiter'
 import { getProjectById } from './projects'
 
@@ -33,11 +34,17 @@ describe('dados profissionais para recrutadores', () => {
     expect(new Set(projectIds).size).toBe(projectIds.length)
   })
 
-  it('possui seis projetos principais e cinco capturas reais', () => {
-    expect(FEATURED_RECRUITER_PROJECTS).toHaveLength(6)
+  it('prioriza assinatura, SaaS e PDV sem perder os projetos secundários', () => {
+    expect(FEATURED_RECRUITER_PROJECTS.map((project) => project.id)).toEqual([
+      'zd-signature-input', 'convites-saas', 'pdv',
+    ])
+    expect(SECONDARY_RECRUITER_PROJECTS).toHaveLength(6)
+    for (const id of ['estoque-desktop', 'brutona', 'vm-viagens']) {
+      expect(SECONDARY_RECRUITER_PROJECTS.find((project) => project.id === id)?.casePath).toMatch(/^\/projetos\/.+\/$/)
+    }
 
     const illustratedProjects = FEATURED_RECRUITER_PROJECTS.filter((project) => project.cover)
-    expect(illustratedProjects).toHaveLength(5)
+    expect(illustratedProjects).toHaveLength(2)
 
     for (const project of illustratedProjects) {
       expect(project.cover?.src).toMatch(/^\/projects\/.+\.webp$/)
@@ -45,8 +52,8 @@ describe('dados profissionais para recrutadores', () => {
     }
   })
 
-  it('referencia o catálogo canônico nos projetos principais', () => {
-    for (const recruiterProject of FEATURED_RECRUITER_PROJECTS) {
+  it('referencia o catálogo canônico em todos os projetos com case', () => {
+    for (const recruiterProject of RECRUITER_PROJECTS.filter((project) => project.casePath)) {
       const catalogProject = getProjectById(recruiterProject.id)
 
       expect(catalogProject).toBeDefined()

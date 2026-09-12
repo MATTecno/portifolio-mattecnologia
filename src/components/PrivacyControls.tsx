@@ -19,14 +19,14 @@ function browserUsesDoNotTrack(): boolean {
   return navigator.doNotTrack === '1' || navigator.doNotTrack === 'yes'
 }
 
-export type PrivacyControlsTheme = 'default' | 'recruiter'
+export type PrivacyControlsTheme = 'default' | 'recruiter' | 'commercial'
 
 type PrivacyControlsProps = {
   theme?: PrivacyControlsTheme
 }
 
 export default function PrivacyControls({ theme = 'default' }: PrivacyControlsProps) {
-  const recruiterTheme = theme === 'recruiter'
+  const recruiterTheme = theme !== 'default'
   const initialPreferences = useMemo(() => getConsentPreferences(), [])
   const [preferences, setPreferences] = useState<ConsentPreferences | null>(initialPreferences)
   const [dialogOpen, setDialogOpen] = useState(false)

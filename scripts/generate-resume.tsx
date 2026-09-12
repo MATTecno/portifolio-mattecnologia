@@ -133,10 +133,7 @@ const styles = StyleSheet.create({
     marginBottom: 3,
   },
   footer: {
-    position: 'absolute',
-    right: 36,
-    bottom: 16,
-    left: 36,
+    marginTop: 14,
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderTopWidth: 0.5,
@@ -173,7 +170,10 @@ function Header() {
         <Link src={RECRUITER_PROFILE.github} style={styles.contactLink}>github.com/MATTecno</Link>
       </View>
       <Text style={{ marginTop: 5, color: '#475569' }}>
-        Disponibilidade: remoto, híbrido e presencial em Belo Horizonte.
+        {RECRUITER_PROFILE.objective}
+      </Text>
+      <Text style={{ marginTop: 3, color: '#475569' }}>
+        Disponibilidade: {RECRUITER_PROFILE.availability.join(', ')}.
       </Text>
     </View>
   )
@@ -181,7 +181,7 @@ function Header() {
 
 function Footer({ page }: { page: number }) {
   return (
-    <View style={styles.footer} fixed>
+    <View style={styles.footer} wrap={false}>
       <Text>Marcelo Diogo Teixeira — Desenvolvedor Full Stack</Text>
       <Text>Página {page} de 2</Text>
     </View>
@@ -217,6 +217,9 @@ function ResumeDocument() {
               </View>
               <Text style={styles.company}>{experience.company}</Text>
               {experience.highlights.map((highlight) => <Bullet key={highlight}>{highlight}</Bullet>)}
+              {experience.focusAreas?.map((area) => (
+                <Bullet key={area.title}>{`${area.title}: ${area.contribution}`}</Bullet>
+              ))}
             </View>
           ))}
         </View>
@@ -269,6 +272,12 @@ function ResumeDocument() {
               {project.links.map((link) => (
                 <Link key={link.href} src={link.href} style={styles.contactLink}>{link.label}: {link.href}</Link>
               ))}
+              {project.casePath && (
+                <Link src={`https://www.mattecnologia.dev.br${project.casePath}`} style={styles.contactLink}>Estudo de caso: mattecnologia.dev.br{project.casePath}</Link>
+              )}
+              {project.id === 'zd-signature-input' && (
+                <Link src="https://www.mattecnologia.dev.br/demos/assinatura/" style={styles.contactLink}>Demonstração interativa: mattecnologia.dev.br/demos/assinatura/</Link>
+              )}
             </View>
           ))}
         </View>
@@ -278,10 +287,10 @@ function ResumeDocument() {
           {SECONDARY_RECRUITER_PROJECTS.map((project) => (
             <View key={project.id} style={styles.compactEntry}>
               <Text style={styles.inlineLabel}>{project.title}</Text>
-              <Text>{project.summary}</Text>
-              {project.links.map((link) => (
-                <Link key={link.href} src={link.href} style={styles.contactLink}>{link.label}: {link.href}</Link>
-              ))}
+              <Text>{project.stack.join(', ')}</Text>
+              {project.casePath && (
+                <Link src={`https://www.mattecnologia.dev.br${project.casePath}`} style={styles.contactLink}>mattecnologia.dev.br{project.casePath}</Link>
+              )}
             </View>
           ))}
         </View>

@@ -4,6 +4,7 @@ import { initAnalytics } from './lib/analytics'
 import { mountPrivacyControls } from './lib/privacy-controls'
 import ProjectCasePage from './pages/ProjectCasePage'
 import './styles.css'
+import './commercial.css'
 
 const rootElement = document.getElementById('root')
 const slug = rootElement?.dataset.projectSlug
@@ -15,4 +16,4 @@ if (!rootElement || !project) {
 
 createRoot(rootElement).render(<ProjectCasePage project={project} />)
 initAnalytics({ pageType: 'case' })
-mountPrivacyControls()
+mountPrivacyControls('commercial')

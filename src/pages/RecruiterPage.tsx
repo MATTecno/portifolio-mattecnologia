@@ -25,6 +25,7 @@ import {
   trackResumeDownload,
 } from '../lib/analytics'
 import { openPrivacyPreferences } from '../lib/consent'
+import SignatureDemo from '../components/SignatureDemo'
 
 const RESUME_PATH = '/Marcelo-Diogo-Teixeira-Curriculo.pdf'
 
@@ -118,7 +119,7 @@ export default function RecruiterPage() {
           )}
         </div>
 
-        <div className="mx-auto grid max-w-6xl gap-10 px-5 py-16 md:px-6 md:py-24 lg:grid-cols-[minmax(0,1.5fr)_minmax(280px,0.7fr)] lg:items-end">
+        <div className="mx-auto grid max-w-6xl gap-10 px-5 py-16 md:px-6 md:py-24 lg:grid-cols-[minmax(0,1.5fr)_minmax(280px,0.7fr)] lg:items-center">
           <div>
             <p className="mb-4 text-sm font-bold uppercase tracking-[0.18em] text-blue-700">Perfil profissional</p>
             <p className="text-lg font-semibold text-slate-600">{RECRUITER_PROFILE.name}</p>
@@ -126,8 +127,10 @@ export default function RecruiterPage() {
               {RECRUITER_PROFILE.headline}
             </h1>
             <p className="mt-6 max-w-3xl text-lg leading-relaxed text-slate-600 md:text-xl">
-              Construo e evoluo sistemas corporativos, aplicações web, APIs e produtos digitais conectando decisões
-              técnicas às necessidades do negócio.
+              {RECRUITER_PROFILE.objective}
+            </p>
+            <p className="mt-4 max-w-3xl leading-relaxed text-slate-600">
+              Experiência em sistemas corporativos, APIs REST e integrações com bancos de dados.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
@@ -188,7 +191,7 @@ export default function RecruiterPage() {
             </ul>
             <div className="mt-6 border-t border-slate-200 pt-5 text-sm text-slate-600">
               <p><strong className="text-slate-900">Atuação profissional:</strong> desde 2024</p>
-              <p className="mt-2"><strong className="text-slate-900">Foco atual:</strong> PHP, TypeScript, Vue.js, Oracle e PostgreSQL</p>
+              <p className="mt-2"><strong className="text-slate-900">Foco atual:</strong> {RECRUITER_PROFILE.coreSkills.join(', ')}</p>
             </div>
           </aside>
         </div>
@@ -204,7 +207,7 @@ export default function RecruiterPage() {
             <div className="space-y-5 text-lg leading-relaxed text-slate-600">
               {RECRUITER_PROFILE.summary.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
               <div className="flex flex-wrap gap-2 pt-2">
-                {['PHP', 'TypeScript', 'Vue.js', 'Oracle', 'PostgreSQL', 'APIs REST', 'Docker'].map((skill) => (
+                {RECRUITER_PROFILE.coreSkills.map((skill) => (
                   <span key={skill} className="rounded-md border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-semibold text-slate-700">
                     {skill}
                   </span>
@@ -234,14 +237,32 @@ export default function RecruiterPage() {
                   <p className="mt-1 font-semibold text-blue-700">{experience.company}</p>
                   <p className="mt-2 text-sm text-slate-500">{experience.period}</p>
                 </div>
-                <ul className="space-y-3 text-sm leading-relaxed text-slate-600 md:text-base">
-                  {experience.highlights.map((highlight) => (
-                    <li key={highlight} className="flex gap-3">
-                      <span className="mt-2 size-1.5 shrink-0 rounded-full bg-blue-600" aria-hidden="true" />
-                      <span>{highlight}</span>
-                    </li>
-                  ))}
-                </ul>
+                <div>
+                  <ul className="space-y-3 text-sm leading-relaxed text-slate-600 md:text-base">
+                    {experience.highlights.map((highlight) => (
+                      <li key={highlight} className="flex gap-3">
+                        <span className="mt-2 size-1.5 shrink-0 rounded-full bg-blue-600" aria-hidden="true" />
+                        <span>{highlight}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  {experience.focusAreas && (
+                    <div className="mt-6 border-t border-slate-200 pt-6">
+                      <h4 className="text-sm font-bold text-slate-950">Frentes de atuação</h4>
+                      <div className="mt-4 space-y-4">
+                        {experience.focusAreas.map((area) => (
+                          <section key={area.title} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                            <h5 className="font-semibold text-slate-950">{area.title}</h5>
+                            <p className="mt-2 text-sm leading-relaxed text-slate-600">{area.context}</p>
+                            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+                              <strong>Minha contribuição: </strong>{area.contribution}
+                            </p>
+                          </section>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </article>
             ))}
           </div>
@@ -253,11 +274,11 @@ export default function RecruiterPage() {
               <p className="text-sm font-bold uppercase tracking-[0.16em] text-blue-700">Projetos</p>
               <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-950 md:text-4xl">Prática além do ambiente corporativo</h2>
               <p className="mt-4 leading-relaxed text-slate-600">
-                Produtos próprios que demonstram arquitetura, integração, experiência de uso e entrega em diferentes plataformas.
+                Três projetos selecionados para mostrar componentes reutilizáveis, desenvolvimento de produto e integração entre frontend e backend.
               </p>
             </div>
 
-            <div className="mt-10 grid gap-7 lg:grid-cols-2">
+            <div className="mt-10 grid gap-6 lg:grid-cols-3">
               {FEATURED_RECRUITER_PROJECTS.map((project) => (
                 <article key={project.id} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
                   {project.cover ? (
@@ -265,7 +286,7 @@ export default function RecruiterPage() {
                       <img
                         src={project.cover.src}
                         srcSet={project.cover.srcSet}
-                        sizes="(min-width: 1024px) 560px, calc(100vw - 40px)"
+                        sizes="(min-width: 1024px) 360px, calc(100vw - 40px)"
                         alt={project.cover.alt}
                         className="size-full object-contain"
                         loading="lazy"
@@ -284,7 +305,7 @@ export default function RecruiterPage() {
                     </div>
                   )}
 
-                  <div className="p-6 md:p-7">
+                  <div className="p-6">
                     <div className="flex flex-wrap gap-2 text-xs font-semibold">
                       <span className="rounded-full bg-blue-50 px-3 py-1 text-blue-700">{project.status}</span>
                       <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-600">{project.category}</span>
@@ -308,6 +329,11 @@ export default function RecruiterPage() {
                     </div>
                     {(project.casePath || project.links.length > 0) && (
                       <div className="mt-6 flex flex-wrap gap-3">
+                        {project.id === 'zd-signature-input' && (
+                          <a href="#demonstracao" className="inline-flex items-center gap-2 rounded-lg bg-blue-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-800">
+                            Experimentar componente
+                          </a>
+                        )}
                         {project.casePath && (
                           <a
                             href={project.casePath}
@@ -342,7 +368,7 @@ export default function RecruiterPage() {
               ))}
             </div>
 
-            <h3 className="mt-14 text-2xl font-bold text-slate-950">Outros projetos</h3>
+            <h3 id="outros-projetos" className="mt-14 scroll-mt-24 text-2xl font-bold text-slate-950">Outros projetos</h3>
             <div className="mt-6 grid gap-5 md:grid-cols-3">
               {SECONDARY_RECRUITER_PROJECTS.map((project) => (
                 <article key={project.id} className="rounded-xl border border-slate-200 bg-slate-50 p-5">
@@ -356,8 +382,17 @@ export default function RecruiterPage() {
                       </span>
                     ))}
                   </div>
-                  {project.links.length > 0 && (
+                  {(project.casePath || project.links.length > 0) && (
                     <div className="mt-5 flex flex-wrap gap-3">
+                      {project.casePath && (
+                        <a
+                          href={project.casePath}
+                          onClick={() => trackProject(project.id, 'case', 'recruiter_secondary_projects')}
+                          className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-800 transition hover:border-blue-500 hover:text-blue-700"
+                        >
+                          Ver estudo de caso
+                        </a>
+                      )}
                       {project.links.map((link) => (
                         <a
                           key={link.href}
@@ -383,20 +418,34 @@ export default function RecruiterPage() {
           </div>
         </section>
 
+        <div className="mx-auto max-w-6xl px-5 pt-16 md:px-6">
+          <SignatureDemo location="recruiter_demo" />
+        </div>
+
         <section id="competencias" className="scroll-mt-24 mx-auto max-w-6xl px-5 py-16 md:px-6 md:py-20">
           <div className="max-w-3xl">
             <p className="text-sm font-bold uppercase tracking-[0.16em] text-blue-700">Competências técnicas</p>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-950 md:text-4xl">Stack e práticas de desenvolvimento</h2>
+            <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-950 md:text-4xl">Competências em contexto</h2>
           </div>
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {RECRUITER_PROFILE.skills.map((group) => (
               <article key={group.title} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
                 <h3 className="font-bold text-slate-950">{group.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-slate-600">{group.description}</p>
                 <ul className="mt-4 flex flex-wrap gap-2">
                   {group.items.map((item) => (
                     <li key={item} className="rounded-md bg-slate-100 px-2.5 py-1.5 text-sm text-slate-700">{item}</li>
                   ))}
                 </ul>
+                {group.evidence.length > 0 && (
+                  <div className="mt-5 flex flex-wrap gap-x-3 gap-y-2 border-t border-slate-200 pt-4">
+                    {group.evidence.map((link) => (
+                      <a key={link.href} href={link.href} className="text-sm font-semibold text-blue-700 underline underline-offset-4">
+                        {link.label}
+                      </a>
+                    ))}
+                  </div>
+                )}
               </article>
             ))}
           </div>

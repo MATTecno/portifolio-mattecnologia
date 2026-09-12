@@ -172,6 +172,20 @@ describe('eventos públicos de analytics', () => {
     expect(propertyNames).not.toContain('message')
   })
 
+  it('registra as etapas do briefing somente com metadados públicos', () => {
+    for (const name of ['briefing_started', 'briefing_completed'] as const) {
+      expect(buildAnalyticsEvent(name, { location: 'commercial_briefing' }, { pageType: 'commercial' }, 'direto', '/')).toEqual({
+        name,
+        properties: {
+          page_path: '/',
+          page_type: 'commercial',
+          source: 'direto',
+          location: 'commercial_briefing',
+        },
+      })
+    }
+  })
+
   it('remove URLs e referrers adicionados automaticamente pelo provedor', () => {
     const event: CaptureResult = {
       uuid: 'f4706435-a535-48e7-ae93-fb015f587689',

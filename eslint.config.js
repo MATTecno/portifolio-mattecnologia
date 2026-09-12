@@ -20,4 +20,8 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  {
+    files: ['src/demos/signature.ts'],
+    rules: { 'react-hooks/rules-of-hooks': 'off' },
+  },
 ])

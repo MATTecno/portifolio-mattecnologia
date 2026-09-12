@@ -1,17 +1,19 @@
 import { openPrivacyPreferences } from '../lib/consent'
-
 export default function Rodape() {
-  const year = new Date().getFullYear()
-
   return (
-    <footer className="border-t border-white/10">
-      <div className="max-w-6xl mx-auto px-6 py-8 text-center text-sm opacity-80">
-        <p>© {year} MATTecnologia — Desenvolvimento de software sob medida.</p>
-        <div className="mt-2 flex flex-wrap justify-center gap-x-4 gap-y-2">
-          <a href="/privacidade/" className="underline-offset-4 hover:underline focus:underline">
-            Privacidade
+    <footer className="site-footer">
+      <div className="site-container footer-layout">
+        <div>
+          <a className="site-brand" href="/">
+            MAT<span>Tecnologia</span>
           </a>
-          <button type="button" onClick={openPrivacyPreferences} className="underline-offset-4 hover:underline focus:underline">
+          <p>Software sob medida. Atendimento direto com Marcelo Diogo.</p>
+          <p className="site-caption">© {new Date().getFullYear()} MATTecnologia</p>
+        </div>
+        <div className="footer-links">
+          <a href="/recrutadores/">Perfil profissional</a>
+          <a href="/privacidade/">Privacidade</a>
+          <button type="button" onClick={openPrivacyPreferences}>
             Preferências de cookies
           </button>
         </div>

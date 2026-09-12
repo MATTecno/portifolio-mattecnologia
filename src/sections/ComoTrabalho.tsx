@@ -1,49 +1,36 @@
+import Sobre from './Sobre'
 const STEPS = [
-  {
-    number: '01',
-    title: 'Descoberta',
-    text: 'Mapeamento do problema, de quem usa a solução e do que realmente precisa melhorar na rotina.',
-  },
-  {
-    number: '02',
-    title: 'Escopo',
-    text: 'A ideia se transforma em prioridades, fluxos e uma primeira entrega clara para todos.',
-  },
-  {
-    number: '03',
-    title: 'Desenvolvimento',
-    text: 'O desenvolvimento acontece em ciclos curtos, validando as partes importantes antes de avançar.',
-  },
-  {
-    number: '04',
-    title: 'Entrega e evolução',
-    text: 'O produto entra em uso com a documentação necessária e uma base preparada para os próximos passos.',
-  },
+  ['Conversa inicial', 'Você conta o que precisa resolver, quem vai usar o sistema e o que já existe hoje.'],
+  [
+    'Definição do escopo',
+    'Organizamos as prioridades e os entregáveis. A proposta reúne o que será desenvolvido e as condições do trabalho.',
+  ],
+  [
+    'Desenvolvimento e validação',
+    'As partes do projeto são apresentadas para conferir os fluxos e ajustar o que foi combinado.',
+  ],
+  [
+    'Entrega',
+    'Revisamos a versão desenvolvida e as orientações de uso. Publicação e acompanhamento seguem o escopo da proposta.',
+  ],
 ]
-
 export default function ComoTrabalho() {
   return (
-    <section id="processo" className="scroll-mt-24 border-y border-white/10 bg-white/[0.025]">
-      <div className="max-w-6xl mx-auto px-6 py-20">
-        <div className="max-w-3xl mb-10">
-          <p className="text-primary text-sm font-semibold uppercase tracking-[0.2em] mb-3">Como trabalho</p>
-          <h2 className="text-3xl md:text-4xl font-orbitron font-bold">Da necessidade à primeira versão em uso</h2>
-          <p className="opacity-75 mt-4">Um processo direto para reduzir dúvidas, alinhar expectativas e entregar valor cedo.</p>
-        </div>
-
-        <ol className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {STEPS.map((step, index) => (
-            <li key={step.number} className="relative p-5 rounded-xl border border-white/10 bg-background/70">
-              <span className="font-orbitron text-primary text-sm">{step.number}</span>
-              <h3 className="font-semibold text-lg mt-3">{step.title}</h3>
-              <p className="text-sm opacity-70 leading-relaxed mt-2">{step.text}</p>
-              {index < STEPS.length - 1 && (
-                <span className="hidden lg:block absolute top-7 -right-4 text-primary/40" aria-hidden="true">→</span>
-              )}
-            </li>
-          ))}
-        </ol>
+    <section id="processo" className="site-section site-container">
+      <div className="section-heading">
+        <p className="site-eyebrow">Como funciona</p>
+        <h2>Do primeiro contato à entrega.</h2>
       </div>
+      <ol className="process-steps">
+        {STEPS.map(([title, description], index) => (
+          <li key={title}>
+            <span className="site-caption">0{index + 1}</span>
+            <h3>{title}</h3>
+            <p>{description}</p>
+          </li>
+        ))}
+      </ol>
+      <Sobre />
     </section>
   )
 }
