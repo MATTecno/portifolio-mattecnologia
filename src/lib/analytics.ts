@@ -5,7 +5,7 @@ import {
   hasCampaign,
   type CampaignParams,
 } from './attribution'
-import { syncGoogleAdsWithConsent, trackWhatsAppAdsConversion } from './google-ads'
+import { initializeGoogleAdsConsentDefault, syncGoogleAdsWithConsent, trackWhatsAppAdsConversion } from './google-ads'
 import {
   getConsentPreferences,
   subscribeToConsent,
@@ -406,6 +406,7 @@ function applyConsent(preferences: ConsentPreferences | null): void {
 export function initAnalytics(pageContext: PageContext): void {
   if (isInitialized) return
   isInitialized = true
+  initializeGoogleAdsConsentDefault()
   context = pageContext
   const attribution = captureBrowserAttribution()
   source = attribution.source

@@ -9,6 +9,25 @@ export const GOOGLE_ADS_CONVERSION_LABEL = 'akRVCPnAhfccEJ33091E'
 export const GOOGLE_ADS_CONVERSION_VALUE = 1.0
 export const GOOGLE_ADS_CONVERSION_CURRENCY = 'BRL'
 
+export const GOOGLE_ADS_CONSENT_DENIED = {
+  ad_storage: 'denied',
+  analytics_storage: 'denied',
+  ad_user_data: 'denied',
+  ad_personalization: 'denied',
+} as const
+
+export const GOOGLE_ADS_CONSENT_DEFAULT = {
+  ...GOOGLE_ADS_CONSENT_DENIED,
+  wait_for_update: 500,
+} as const
+
+export const GOOGLE_ADS_CONSENT_GRANTED = {
+  analytics_storage: 'granted',
+  ad_storage: 'granted',
+  ad_user_data: 'granted',
+  ad_personalization: 'denied',
+} as const
+
 type GtagFn = (...args: unknown[]) => void
 
 type AdsWindow = Window & {
@@ -16,20 +35,8 @@ type AdsWindow = Window & {
   gtag?: GtagFn
 }
 
-const CONSENT_DENIED = {
-  ad_storage: 'denied',
-  ad_user_data: 'denied',
-  ad_personalization: 'denied',
-  analytics_storage: 'denied',
-} as const
-
-const CONSENT_GRANTED = {
-  ad_storage: 'granted',
-  ad_user_data: 'granted',
-  ad_personalization: 'denied',
-  analytics_storage: 'granted',
-} as const
-
+let defaultSent = false
+let updateSent = false
 let scriptRequested = false
 let configured = false
 let adsGranted = false
@@ -54,8 +61,12 @@ function ensureGtag(): GtagFn | null {
   if (!target) return null
 
   target.dataLayer ??= []
-  target.gtag ??= function gtag(...args: unknown[]) {
-    target.dataLayer?.push(args)
+  if (typeof target.gtag !== 'function') {
+    target.gtag = function gtag() {
+      // Consent Mode expects the official stub: dataLayer.push(arguments).
+      // eslint-disable-next-line prefer-rest-params -- Google gtag bootstrap
+      target.dataLayer?.push(arguments)
+    }
   }
 
   return target.gtag
@@ -75,41 +86,53 @@ function hasGoogleAdsScript(): boolean {
 }
 
 function loadGoogleAdsScript(): void {
-  if (scriptRequested || hasGoogleAdsScript() || typeof document === 'undefined') {
-    scriptRequested = scriptRequested || hasGoogleAdsScript()
+  try {
+    if (scriptRequested || hasGoogleAdsScript() || typeof document === 'undefined') {
+      scriptRequested = scriptRequested || hasGoogleAdsScript()
+      return
+    }
+
+    scriptRequested = true
+    const script = document.createElement('script')
+    script.async = true
+    script.src = GOOGLE_ADS_SCRIPT_SRC
+    script.onerror = () => {
+      // WhatsApp navigation must not depend on this script.
+    }
+    document.head.append(script)
+  } catch {
     return
   }
-
-  scriptRequested = true
-  const script = document.createElement('script')
-  script.async = true
-  script.src = GOOGLE_ADS_SCRIPT_SRC
-  script.onerror = () => {
-    // WhatsApp navigation must not depend on this script.
-  }
-  document.head.append(script)
 }
 
-function configureGoogleAds(): void {
+export function initializeGoogleAdsConsentDefault(): void {
+  if (defaultSent) return
+  defaultSent = true
+  callGtag('consent', 'default', { ...GOOGLE_ADS_CONSENT_DEFAULT })
+}
+
+function configureGoogleAdsTag(): void {
   if (configured) return
   configured = true
-  callGtag('consent', 'default', { ...CONSENT_DENIED, wait_for_update: 500 })
   callGtag('js', new Date())
   callGtag('config', GOOGLE_ADS_ID)
 }
 
 export function applyGoogleAdsConsent(preferences: ConsentPreferences | null): void {
+  initializeGoogleAdsConsentDefault()
+
   const granted = hasAdvertisingConsent(preferences)
   adsGranted = granted
 
-  if (!granted) {
-    if (configured) callGtag('consent', 'update', CONSENT_DENIED)
-    return
+  if (!granted) return
+
+  if (!updateSent) {
+    updateSent = true
+    callGtag('consent', 'update', { ...GOOGLE_ADS_CONSENT_GRANTED })
   }
 
-  configureGoogleAds()
   loadGoogleAdsScript()
-  callGtag('consent', 'update', CONSENT_GRANTED)
+  configureGoogleAdsTag()
 }
 
 export function syncGoogleAdsWithConsent(): void {
@@ -117,6 +140,8 @@ export function syncGoogleAdsWithConsent(): void {
 }
 
 export function resetGoogleAdsRuntime(): void {
+  defaultSent = false
+  updateSent = false
   scriptRequested = false
   configured = false
   adsGranted = false
