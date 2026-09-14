@@ -1,47 +1,51 @@
 const SERVICES = [
   [
-    'Organizar a operação',
-    'Sistemas para registrar produtos, acompanhar estoque e reunir informações que hoje ficam espalhadas.',
-    'Sistemas web e aplicações desktop',
+    'Sistemas internos',
+    'Controle de processos, equipes, atividades e informações da empresa.',
   ],
   [
-    'Apresentar produtos e serviços',
-    'Sites com catálogo e caminhos de contato para quem quer conhecer o que sua empresa oferece.',
-    'Sites e páginas de apresentação',
+    'Estoque e operações',
+    'Entradas, saídas, produtos, lotes, movimentações e relatórios.',
   ],
   [
-    'Conectar ferramentas e automatizar tarefas',
-    'Integrações entre sistemas, leitura de arquivos e processamento de dados para rotinas repetitivas.',
-    'Integrações e automações',
+    'Automação de processos',
+    'Substituição de tarefas manuais, planilhas e rotinas repetitivas.',
   ],
   [
-    'Criar ou evoluir um produto',
-    'Desenvolvimento de uma primeira versão ou de novas funcionalidades para um sistema que já existe.',
-    'Produtos digitais, aplicativos e manutenção evolutiva',
+    'Portais e plataformas',
+    'Sistemas web personalizados para clientes, colaboradores ou parceiros.',
+  ],
+  [
+    'Modernização de processos',
+    'Transformação de controles existentes em sistemas mais organizados.',
   ],
 ]
+
 export default function Servicos() {
   return (
     <section id="servicos" className="site-section services-section">
       <div className="site-container services-layout">
         <div className="section-heading">
-          <p className="site-eyebrow">Serviços</p>
-          <h2>O que precisa funcionar melhor por aí?</h2>
+          <p className="site-eyebrow">Soluções</p>
+          <h2>Exemplos do que pode ser desenvolvido</h2>
           <p>
-            A conversa começa pela sua rotina. As tecnologias vêm depois, conforme a necessidade do projeto.
+            Cada projeto parte da rotina da empresa. Estes são caminhos comuns, não uma lista fechada do que
+            aceitamos.
           </p>
         </div>
         <div>
-          {SERVICES.map(([title, description, format], index) => (
+          {SERVICES.map(([title, description], index) => (
             <article className="service-row" key={title}>
               <span className="service-number">0{index + 1}</span>
               <div>
                 <h3>{title}</h3>
                 <p>{description}</p>
-                <p className="site-caption">{format}</p>
               </div>
             </article>
           ))}
+          <p className="services-note">
+            Tem uma necessidade diferente? Conte o problema e avaliamos a melhor solução.
+          </p>
         </div>
       </div>
     </section>

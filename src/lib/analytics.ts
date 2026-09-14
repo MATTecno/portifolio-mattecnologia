@@ -1,6 +1,10 @@
 import type { CaptureResult } from 'posthog-js'
 import type { PostHogConfig } from 'posthog-js/dist/module.slim'
-import { captureBrowserAttribution } from './attribution'
+import {
+  captureBrowserAttribution,
+  hasCampaign,
+  type CampaignParams,
+} from './attribution'
 import {
   getConsentPreferences,
   subscribeToConsent,
@@ -20,7 +24,7 @@ type BaseEventProperties = {
   page_path: string
   page_type: PageType
   source: string
-}
+} & CampaignParams
 
 export type AnalyticsEvent =
   | { name: 'page_viewed'; properties: BaseEventProperties }
@@ -44,6 +48,14 @@ export type AnalyticsEvent =
   | { name: 'contact_form_submitted'; properties: BaseEventProperties & { location: string } }
   | { name: 'briefing_started'; properties: BaseEventProperties & { location: string } }
   | { name: 'briefing_completed'; properties: BaseEventProperties & { location: string } }
+  | {
+      name: 'faq_interaction'
+      properties: BaseEventProperties & {
+        location: string
+        question_id: string
+        state: 'open' | 'closed'
+      }
+    }
 
 type EventName = AnalyticsEvent['name']
 type AnalyticsProvider = {
@@ -64,6 +76,7 @@ type EventDetails = {
   contact_form_submitted: { location: string }
   briefing_started: { location: string }
   briefing_completed: { location: string }
+  faq_interaction: { location: string; question_id: string; state: 'open' | 'closed' }
 }
 
 const PRIVATE_PROVIDER_PROPERTIES = [
@@ -80,6 +93,7 @@ const PRIVATE_PROVIDER_PROPERTIES = [
 ] as const
 let context: PageContext | null = null
 let source = 'direto'
+let campaign: CampaignParams = {}
 let pagePath = '/'
 let posthogClient: AnalyticsProvider | null = null
 let isInitialized = false
@@ -98,6 +112,7 @@ export function buildAnalyticsEvent<TName extends EventName>(
   page: PageContext,
   eventSource: string,
   eventPagePath: string,
+  eventCampaign: CampaignParams = {},
 ): Extract<AnalyticsEvent, { name: TName }> {
   return {
     name,
@@ -105,6 +120,7 @@ export function buildAnalyticsEvent<TName extends EventName>(
       page_path: eventPagePath,
       page_type: page.pageType,
       source: eventSource,
+      ...(hasCampaign(eventCampaign) ? eventCampaign : {}),
       ...details,
     },
   } as Extract<AnalyticsEvent, { name: TName }>
@@ -216,7 +232,7 @@ function capture(event: AnalyticsEvent): void {
 
 function track<TName extends EventName>(name: TName, details: EventDetails[TName]): void {
   if (!context) return
-  capture(buildAnalyticsEvent(name, details, context, source, pagePath))
+  capture(buildAnalyticsEvent(name, details, context, source, pagePath, campaign))
 }
 
 export function clearPostHogBrowserStorage(projectKey: string): void {
@@ -390,7 +406,9 @@ export function initAnalytics(pageContext: PageContext): void {
   if (isInitialized) return
   isInitialized = true
   context = pageContext
-  source = captureBrowserAttribution()
+  const attribution = captureBrowserAttribution()
+  source = attribution.source
+  campaign = attribution.campaign
   pagePath = window.location.pathname
   currentPreferences = getConsentPreferences()
 
@@ -433,6 +451,10 @@ export function trackContactFormSubmitted(location: string): void {
 
 export function trackBriefing(stage: 'started' | 'completed'): void {
   track(stage === 'started' ? 'briefing_started' : 'briefing_completed', { location: 'commercial_briefing' })
+}
+
+export function trackFaqInteraction(questionId: string, state: 'open' | 'closed'): void {
+  track('faq_interaction', { location: 'faq', question_id: questionId, state })
 }
 
 export function getProjectDestination(href: string): Exclude<ProjectDestination, 'case'> {

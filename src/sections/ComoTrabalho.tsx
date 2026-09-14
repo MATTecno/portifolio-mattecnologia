@@ -1,20 +1,26 @@
+import WhatsAppCta from '../components/WhatsAppCta'
+import { WHATSAPP_PROJECT_MESSAGE } from '../lib/contact'
 import Sobre from './Sobre'
+
 const STEPS = [
-  ['Conversa inicial', 'Você conta o que precisa resolver, quem vai usar o sistema e o que já existe hoje.'],
-  [
-    'Definição do escopo',
-    'Organizamos as prioridades e os entregáveis. A proposta reúne o que será desenvolvido e as condições do trabalho.',
-  ],
-  [
-    'Desenvolvimento e validação',
-    'As partes do projeto são apresentadas para conferir os fluxos e ajustar o que foi combinado.',
-  ],
-  [
-    'Entrega',
-    'Revisamos a versão desenvolvida e as orientações de uso. Publicação e acompanhamento seguem o escopo da proposta.',
-  ],
+  ['Você conta o problema', 'Descreve como a empresa trabalha hoje e o que precisa funcionar melhor.'],
+  ['Entendemos seu processo', 'Conversamos sobre quem usa, o que já existe e o que realmente precisa ser resolvido.'],
+  ['Definimos a solução', 'Organizamos prioridades e o que faz sentido desenvolver neste momento.'],
+  ['Você recebe uma proposta', 'O escopo, as entregas e as condições ficam registrados antes do início.'],
+  ['Desenvolvemos e acompanhamos', 'O sistema é construído e a implantação é acompanhada conforme o combinado.'],
 ]
-export default function ComoTrabalho() {
+
+type ComoTrabalhoProps = {
+  showAbout?: boolean
+  ctaLocation?: string
+  ctaMessage?: string
+}
+
+export default function ComoTrabalho({
+  showAbout = true,
+  ctaLocation,
+  ctaMessage = WHATSAPP_PROJECT_MESSAGE,
+}: ComoTrabalhoProps) {
   return (
     <section id="processo" className="site-section site-container">
       <div className="section-heading">
@@ -30,7 +36,17 @@ export default function ComoTrabalho() {
           </li>
         ))}
       </ol>
-      <Sobre />
+      {ctaLocation && (
+        <div className="site-actions process-cta">
+          <WhatsAppCta
+            location={ctaLocation}
+            label="Quero conversar sobre meu projeto"
+            message={ctaMessage}
+            icon
+          />
+        </div>
+      )}
+      {showAbout && <Sobre />}
     </section>
   )
 }

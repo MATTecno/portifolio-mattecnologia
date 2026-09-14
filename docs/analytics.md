@@ -41,7 +41,9 @@ O PostHog usa persistência `localStorage+cookie`, com validade de 180 dias e se
 - Gupy: `https://www.mattecnologia.dev.br/recrutadores/?origem=gupy`
 - E-mail: `https://www.mattecnologia.dev.br/recrutadores/?origem=email`
 
-A origem explícita mais recente vale durante a aba atual. `origem` é consumido e removido antes de carregar o analytics. Outros parâmetros são descartados, e somente hashes conhecidos do site permanecem na URL.
+A origem explícita mais recente vale durante a aba atual. `origem` é consumido e removido antes de carregar o analytics. Parâmetros UTM válidos (`utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content`) permanecem na URL, são persistidos na sessão e anexados aos eventos. Os demais parâmetros são descartados, e somente hashes conhecidos do site permanecem na URL.
+
+Tráfego de Google Ads deve usar a landing `/sistemas-sob-medida-bh/?utm_source=google&utm_medium=cpc&utm_campaign=sistemas_bh`. `utm_source` vira o `source` da sessão quando não há `origem`. A conversão de WhatsApp continua no evento existente `contact_clicked` (`channel: whatsapp`). Visualização de case continua em `project_clicked`. A abertura da landing é o `page_viewed` com `page_path: /sistemas-sob-medida-bh/`. Não crie eventos paralelos com os mesmos significados.
 
 ## Eventos
 
@@ -53,8 +55,11 @@ A origem explícita mais recente vale durante a aba atual. `origem` é consumido
 | `profile_clicked` | Abertura do GitHub pessoal | `platform`, `location` |
 | `project_clicked` | Abertura de case, produto ou repositório | `project_id`, `destination`, `location` |
 | `contact_form_submitted` | EmailJS confirmou o envio | `location` |
+| `faq_interaction` | Abertura ou fechamento de uma pergunta da FAQ | `location`, `question_id`, `state` |
 
-Todos recebem apenas `page_path`, `page_type` e `source` como contexto próprio. Autocapture, pageviews automáticos, heatmaps, performance, erros, dead clicks e rage clicks permanecem desativados. Query strings, hashes, valores do formulário e conteúdo do briefing não são adicionados aos eventos.
+Todos recebem `page_path`, `page_type` e `source` como contexto próprio. Quando a sessão veio de campanha, também recebem os UTM válidos. Autocapture, pageviews automáticos, heatmaps, performance, erros, dead clicks e rage clicks permanecem desativados. Query strings livres, hashes, valores do formulário e conteúdo do briefing não são adicionados aos eventos.
+
+`location` do WhatsApp identifica o CTA: `commercial_hero`, `ads_hero`, `floating_whatsapp`, `ads_floating`, `commercial_final_cta`, `ads_final_cta`, `commercial_process`, `ads_process`, `ads_header` e os locais já existentes do formulário e do briefing.
 
 ## Survey de feedback
 

@@ -23,6 +23,7 @@ export default defineConfig({
         projectVmTravel: resolve(import.meta.dirname, 'projetos/vm-viagens/index.html'),
         projectPos: resolve(import.meta.dirname, 'projetos/pdv/index.html'),
         privacy: resolve(import.meta.dirname, 'privacidade/index.html'),
+        adsLanding: resolve(import.meta.dirname, 'sistemas-sob-medida-bh/index.html'),
       },
     },
   },

@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import {
   ATTRIBUTION_STORAGE_KEY,
+  CAMPAIGN_STORAGE_KEY,
+  normalizeCampaignValue,
   normalizeSource,
   resolveAttribution,
+  resolveCampaign,
   sanitizeAnalyticsUrl,
   sourceFromReferrer,
   type AttributionStorage,
@@ -26,17 +29,19 @@ function resolve(
   referrer = '',
 ) {
   let replacedUrl: string | undefined
+  const url = new URL(href)
   const source = resolveAttribution({
-    url: new URL(href),
+    url,
     referrer,
     currentOrigin: 'https://www.mattecnologia.dev.br',
     storage,
-    replaceUrl: (url) => {
-      replacedUrl = url
+    replaceUrl: (nextUrl) => {
+      replacedUrl = nextUrl
     },
   })
+  const campaign = resolveCampaign(url, storage)
 
-  return { source, replacedUrl }
+  return { source, campaign, replacedUrl }
 }
 
 describe('atribuição da origem', () => {
@@ -49,6 +54,15 @@ describe('atribuição da origem', () => {
     expect(normalizeSource('../linkedin')).toBeNull()
   })
 
+  it('normaliza valores de campanha sem aceitar conteúdo livre', () => {
+    expect(normalizeCampaignValue(' Google ')).toBe('google')
+    expect(normalizeCampaignValue('software sob medida')).toBe('software_sob_medida')
+    expect(normalizeCampaignValue('sistemas_bh')).toBe('sistemas_bh')
+    expect(normalizeCampaignValue('a'.repeat(81))).toBeNull()
+    expect(normalizeCampaignValue('utm?invalido')).toBeNull()
+    expect(normalizeCampaignValue('nome@empresa.com')).toBeNull()
+  })
+
   it('usa a origem explícita mais recente e a persiste na sessão', () => {
     const storage = new MemoryStorage()
 
@@ -56,6 +70,35 @@ describe('atribuição da origem', () => {
     expect(resolve('https://www.mattecnologia.dev.br/projetos/pdv/?origem=email', storage).source).toBe('email')
     expect(storage.getItem(ATTRIBUTION_STORAGE_KEY)).toBe('email')
     expect(resolve('https://www.mattecnologia.dev.br/privacidade/', storage).source).toBe('email')
+  })
+
+  it('usa utm_source como origem da sessão e persiste a campanha', () => {
+    const storage = new MemoryStorage()
+    const result = resolve(
+      'https://www.mattecnologia.dev.br/sistemas-sob-medida-bh/?utm_source=google&utm_medium=cpc&utm_campaign=sistemas_bh&utm_term=software_sob_medida&utm_content=anuncio_1',
+      storage,
+    )
+
+    expect(result.source).toBe('google')
+    expect(result.campaign).toEqual({
+      utm_source: 'google',
+      utm_medium: 'cpc',
+      utm_campaign: 'sistemas_bh',
+      utm_term: 'software_sob_medida',
+      utm_content: 'anuncio_1',
+    })
+    expect(storage.getItem(ATTRIBUTION_STORAGE_KEY)).toBe('google')
+    expect(storage.getItem(CAMPAIGN_STORAGE_KEY)).toContain('sistemas_bh')
+    expect(resolve('https://www.mattecnologia.dev.br/projetos/estoque/', storage)).toMatchObject({
+      source: 'google',
+      campaign: {
+        utm_source: 'google',
+        utm_medium: 'cpc',
+        utm_campaign: 'sistemas_bh',
+        utm_term: 'software_sob_medida',
+        utm_content: 'anuncio_1',
+      },
+    })
   })
 
   it('remove somente origem e preserva os outros parâmetros e o hash', () => {
@@ -99,10 +142,19 @@ describe('atribuição da origem', () => {
     expect(resolve('https://www.mattecnologia.dev.br/', blockedStorage).source).toBe('direto')
   })
 
-  it('remove query strings e preserva somente âncoras conhecidas antes do analytics', () => {
+  it('remove query strings livres e preserva UTM válidos e âncoras conhecidas', () => {
     expect(sanitizeAnalyticsUrl(new URL('https://www.mattecnologia.dev.br/?email=privado#contato')))
       .toBe('/#contato')
     expect(sanitizeAnalyticsUrl(new URL('https://www.mattecnologia.dev.br/recrutadores/?vaga=123#valor-livre')))
       .toBe('/recrutadores/')
+    expect(
+      sanitizeAnalyticsUrl(
+        new URL(
+          'https://www.mattecnologia.dev.br/sistemas-sob-medida-bh/?utm_source=google&utm_medium=cpc&utm_campaign=sistemas_bh&projeto=estoque-desktop#problemas',
+        ),
+      ),
+    ).toBe(
+      '/sistemas-sob-medida-bh/?utm_source=google&utm_medium=cpc&utm_campaign=sistemas_bh#problemas',
+    )
   })
 })

@@ -79,9 +79,39 @@ describe('briefing comercial', () => {
     })
     vi.stubGlobal('document', { referrer: '' })
     try {
-      expect(captureBrowserAttribution()).toBe('linkedin')
+      expect(captureBrowserAttribution()).toEqual({ source: 'linkedin', campaign: {} })
       expect(replaceState).toHaveBeenCalledWith(null, '', '/#contato')
       expect(initialReference?.title).toBe('Gerenciamento de Estoque Desktop')
+    } finally {
+      vi.unstubAllGlobals()
+    }
+  })
+
+  it('preserva UTM válidos ao limpar a referência de projeto', () => {
+    const url = new URL(
+      'https://example.com/?projeto=estoque-desktop&utm_source=google&utm_medium=cpc&utm_campaign=sistemas_bh#contato',
+    )
+    const replaceState = vi.fn()
+    vi.stubGlobal('window', {
+      location: { href: url.href, origin: url.origin, pathname: '/', search: url.search, hash: url.hash },
+      history: { state: null, replaceState },
+      sessionStorage: { getItem: () => null, setItem: () => {} },
+    })
+    vi.stubGlobal('document', { referrer: '' })
+    try {
+      expect(captureBrowserAttribution()).toEqual({
+        source: 'google',
+        campaign: {
+          utm_source: 'google',
+          utm_medium: 'cpc',
+          utm_campaign: 'sistemas_bh',
+        },
+      })
+      expect(replaceState).toHaveBeenCalledWith(
+        null,
+        '',
+        '/?utm_source=google&utm_medium=cpc&utm_campaign=sistemas_bh#contato',
+      )
     } finally {
       vi.unstubAllGlobals()
     }

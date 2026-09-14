@@ -103,9 +103,14 @@
 .site-menu a:hover {
   color: var(--site-accent);
 }
-.site-professional-link {
+.site-professional-link,
+.site-header-whatsapp {
   border-left: 1px solid var(--site-line);
   padding-left: 24px;
+}
+.site-header-whatsapp {
+  color: var(--site-accent);
+  font-weight: 600;
 }
 .site-menu-toggle {
   display: none;
@@ -127,6 +132,21 @@
   align-items: center;
   gap: 56px;
   padding-block: 90px 96px;
+}
+.commercial-hero.is-copy-only {
+  grid-template-columns: minmax(0, 720px);
+  padding-block: 80px 72px;
+}
+.commercial-hero.is-copy-only h1 {
+  overflow-wrap: break-word;
+  font-size: clamp(2.1rem, 5.4vw, 3.2rem);
+}
+.hero-note {
+  margin-top: 16px;
+  max-width: 54ch;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--site-muted);
 }
 .commercial-theme .site-eyebrow {
   font-size: 12px;
@@ -270,6 +290,26 @@
 .project-links {
   margin-top: 20px;
 }
+.project-narrative {
+  display: grid;
+  gap: 16px;
+  margin-top: 16px;
+}
+.project-narrative .site-caption {
+  margin-bottom: 4px;
+}
+.project-highlights {
+  margin: 16px 0 0;
+  padding-left: 18px;
+  color: var(--site-muted);
+  font-size: 14px;
+}
+.project-highlights li {
+  margin-bottom: 8px;
+}
+.project-stack {
+  margin-top: 16px;
+}
 .project-featured {
   grid-column: 1 / -1;
   display: grid;
@@ -348,10 +388,106 @@
   font-size: 12px;
   padding-top: 4px;
 }
+.services-note {
+  margin-top: 28px;
+  font-size: 15px;
+}
+.problems-section {
+  border-top: 1px solid var(--site-line);
+}
+.problems-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px 32px;
+}
+.problem-card {
+  min-width: 0;
+  border-top: 1px solid var(--site-line);
+  padding-top: 18px;
+}
+.problem-card h3 {
+  font-size: 1.15rem;
+}
+.problem-card p {
+  margin-top: 10px;
+  font-size: 15px;
+}
+.diferencial-section {
+  border-top: 1px solid var(--site-line);
+}
+.diferencial-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px 24px;
+}
+.diferencial-grid h3 {
+  font-size: 1.15rem;
+}
+.diferencial-grid p {
+  margin-top: 10px;
+  font-size: 15px;
+}
+.landing-about .about-marcelo {
+  margin-top: 0;
+  padding-bottom: 72px;
+}
+.process-cta {
+  margin-top: 40px;
+}
+.final-cta-section {
+  background: #efefe9;
+  border-block: 1px solid var(--site-line);
+}
+.final-cta-layout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 36px;
+}
+.final-cta-layout h2 {
+  max-width: 18ch;
+}
+.final-cta-layout p:not(.site-eyebrow):not(.site-caption) {
+  margin-top: 16px;
+  max-width: 48ch;
+}
+.final-cta-actions {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+}
+.final-cta-actions .site-actions,
+.final-cta-actions .site-caption {
+  margin-top: 0;
+}
+.whatsapp-float {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 30;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: var(--site-accent);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgb(36 87 197 / 22%);
+}
+.whatsapp-float:hover {
+  background: #1b4296;
+  color: #fff;
+}
+.commercial-page {
+  padding-bottom: 24px;
+}
 .process-steps {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 32px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 24px;
   list-style: none;
 }
 .process-steps li {
@@ -721,8 +857,15 @@
   .site-menu {
     gap: 16px;
   }
-  .site-professional-link {
+  .site-professional-link,
+  .site-header-whatsapp {
     padding-left: 16px;
+  }
+  .process-steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .diferencial-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .commercial-hero {
     gap: 32px;
@@ -763,9 +906,11 @@
   .site-menu a {
     padding: 12px;
   }
-  .site-professional-link {
+  .site-professional-link,
+  .site-header-whatsapp {
     border-left: 0;
     border-top: 1px solid var(--site-line);
+    padding-left: 12px;
   }
   .commercial-hero {
     grid-template-columns: 1fr;
@@ -817,8 +962,14 @@
   .briefing-layout,
   .contact-layout,
   .case-narrative,
-  .case-architecture {
+  .case-architecture,
+  .problems-grid,
+  .diferencial-grid,
+  .final-cta-layout {
     grid-template-columns: 1fr;
+  }
+  .final-cta-layout {
+    display: grid;
   }
   .project-featured {
     gap: 20px;

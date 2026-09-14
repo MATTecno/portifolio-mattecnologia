@@ -1,6 +1,15 @@
 export const ATTRIBUTION_STORAGE_KEY = 'mattecnologia:analytics-source'
+export const CAMPAIGN_STORAGE_KEY = 'mattecnologia:analytics-campaign'
+export const CAMPAIGN_PARAM_KEYS = [
+  'utm_source',
+  'utm_medium',
+  'utm_campaign',
+  'utm_term',
+  'utm_content',
+] as const
 
 const SOURCE_PATTERN = /^[a-z0-9][a-z0-9_-]{0,39}$/
+const CAMPAIGN_VALUE_PATTERN = /^[a-z0-9][a-z0-9_-]{0,79}$/
 const SAFE_ANALYTICS_HASHES = new Set([
   'top',
   'sobre',
@@ -20,9 +29,18 @@ const SAFE_ANALYTICS_HASHES = new Set([
   'participacao-title',
   'architecture-title',
   'decisions-title',
+  'problemas',
+  'diferencial',
+  'conversar',
 ])
 
 export type AttributionStorage = Pick<Storage, 'getItem' | 'setItem'>
+export type CampaignParam = (typeof CAMPAIGN_PARAM_KEYS)[number]
+export type CampaignParams = Partial<Record<CampaignParam, string>>
+export type AttributionResult = {
+  source: string
+  campaign: CampaignParams
+}
 
 export type AttributionInput = {
   url: URL
@@ -37,6 +55,13 @@ export function normalizeSource(value: string | null | undefined): string | null
 
   const normalized = value.trim().toLowerCase()
   return SOURCE_PATTERN.test(normalized) ? normalized : null
+}
+
+export function normalizeCampaignValue(value: string | null | undefined): string | null {
+  if (!value) return null
+
+  const normalized = value.trim().toLowerCase().replace(/\s+/g, '_')
+  return CAMPAIGN_VALUE_PATTERN.test(normalized) ? normalized : null
 }
 
 function recognizedReferrer(hostname: string): string | null {
@@ -80,6 +105,62 @@ function storeSource(storage: AttributionStorage | null | undefined, source: str
   }
 }
 
+function readStoredCampaign(storage: AttributionStorage | null | undefined): CampaignParams {
+  try {
+    const raw = storage?.getItem(CAMPAIGN_STORAGE_KEY)
+    if (!raw) return {}
+    return sanitizeCampaign(JSON.parse(raw) as CampaignParams)
+  } catch {
+    return {}
+  }
+}
+
+function storeCampaign(storage: AttributionStorage | null | undefined, campaign: CampaignParams): void {
+  if (!hasCampaign(campaign)) return
+
+  try {
+    storage?.setItem(CAMPAIGN_STORAGE_KEY, JSON.stringify(campaign))
+  } catch {
+    return
+  }
+}
+
+export function sanitizeCampaign(value: unknown): CampaignParams {
+  if (!value || typeof value !== 'object') return {}
+
+  const campaign: CampaignParams = {}
+  for (const key of CAMPAIGN_PARAM_KEYS) {
+    const normalized = normalizeCampaignValue((value as CampaignParams)[key])
+    if (normalized) campaign[key] = normalized
+  }
+  return campaign
+}
+
+export function hasCampaign(campaign: CampaignParams): boolean {
+  return CAMPAIGN_PARAM_KEYS.some((key) => Boolean(campaign[key]))
+}
+
+export function campaignFromSearchParams(url: URL): CampaignParams {
+  const campaign: CampaignParams = {}
+  for (const key of CAMPAIGN_PARAM_KEYS) {
+    const normalized = normalizeCampaignValue(url.searchParams.get(key))
+    if (normalized) campaign[key] = normalized
+  }
+  return campaign
+}
+
+export function resolveCampaign(
+  url: URL,
+  storage?: AttributionStorage | null,
+): CampaignParams {
+  const fromUrl = campaignFromSearchParams(url)
+  if (hasCampaign(fromUrl)) {
+    storeCampaign(storage, fromUrl)
+    return fromUrl
+  }
+  return readStoredCampaign(storage)
+}
+
 export function resolveAttribution({
   url,
   referrer,
@@ -100,6 +181,12 @@ export function resolveAttribution({
     return explicitSource
   }
 
+  const utmSource = normalizeSource(campaignFromSearchParams(url).utm_source)
+  if (utmSource) {
+    storeSource(storage, utmSource)
+    return utmSource
+  }
+
   const storedSource = readStoredSource(storage)
   if (storedSource) return storedSource
 
@@ -107,11 +194,18 @@ export function resolveAttribution({
 }
 
 export function sanitizeAnalyticsUrl(url: URL): string {
+  const preserved = new URLSearchParams()
+  for (const key of CAMPAIGN_PARAM_KEYS) {
+    const value = normalizeCampaignValue(url.searchParams.get(key))
+    if (value) preserved.set(key, value)
+  }
+
+  const search = preserved.toString()
   const hash = url.hash.slice(1)
-  return `${url.pathname}${SAFE_ANALYTICS_HASHES.has(hash) ? `#${hash}` : ''}`
+  return `${url.pathname}${search ? `?${search}` : ''}${SAFE_ANALYTICS_HASHES.has(hash) ? `#${hash}` : ''}`
 }
 
-export function captureBrowserAttribution(): string {
+export function captureBrowserAttribution(): AttributionResult {
   const url = new URL(window.location.href)
   let storage: AttributionStorage | null = null
 
@@ -127,11 +221,12 @@ export function captureBrowserAttribution(): string {
     currentOrigin: window.location.origin,
     storage,
   })
+  const campaign = resolveCampaign(url, storage)
 
   const sanitizedUrl = sanitizeAnalyticsUrl(url)
   if (`${window.location.pathname}${window.location.search}${window.location.hash}` !== sanitizedUrl) {
     window.history.replaceState(window.history.state, '', sanitizedUrl)
   }
 
-  return source
+  return { source, campaign }
 }

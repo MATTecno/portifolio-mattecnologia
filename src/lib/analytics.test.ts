@@ -151,6 +151,47 @@ describe('eventos públicos de analytics', () => {
       source: 'google',
       location: 'commercial_contact_form',
     })
+
+    expect(buildAnalyticsEvent(
+      'contact_clicked',
+      { channel: 'whatsapp', location: 'ads_hero' },
+      { pageType: 'commercial' },
+      'google',
+      '/sistemas-sob-medida-bh/',
+      {
+        utm_source: 'google',
+        utm_medium: 'cpc',
+        utm_campaign: 'sistemas_bh',
+        utm_term: 'software_sob_medida',
+        utm_content: 'anuncio_1',
+      },
+    ).properties).toEqual({
+      page_path: '/sistemas-sob-medida-bh/',
+      page_type: 'commercial',
+      source: 'google',
+      channel: 'whatsapp',
+      location: 'ads_hero',
+      utm_source: 'google',
+      utm_medium: 'cpc',
+      utm_campaign: 'sistemas_bh',
+      utm_term: 'software_sob_medida',
+      utm_content: 'anuncio_1',
+    })
+
+    expect(buildAnalyticsEvent(
+      'faq_interaction',
+      { location: 'faq', question_id: 'custo', state: 'open' },
+      { pageType: 'commercial' },
+      'google',
+      '/sistemas-sob-medida-bh/',
+    ).properties).toEqual({
+      page_path: '/sistemas-sob-medida-bh/',
+      page_type: 'commercial',
+      source: 'google',
+      location: 'faq',
+      question_id: 'custo',
+      state: 'open',
+    })
   })
 
   it('não inclui query string, hash nem dados pessoais nas propriedades construídas', () => {

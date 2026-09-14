@@ -1,7 +1,15 @@
 import { useEffect, useState } from 'react'
 import { FaBars, FaTimes } from 'react-icons/fa'
+import WhatsAppCta from './WhatsAppCta'
 
-const NAVIGATION = [
+const HOME_NAVIGATION = [
+  ['Soluções', 'servicos'],
+  ['Como funciona', 'processo'],
+  ['Projetos', 'portfolio'],
+  ['Contato', 'contato'],
+] as const
+
+const DEFAULT_NAVIGATION = [
   ['Projetos', 'portfolio'],
   ['Serviços', 'servicos'],
   ['Como funciona', 'processo'],
@@ -9,8 +17,21 @@ const NAVIGATION = [
   ['Contato', 'contato'],
 ] as const
 
-export default function CommercialHeader({ home = false }: { home?: boolean }) {
+type CommercialHeaderProps = {
+  home?: boolean
+  items?: readonly (readonly [string, string])[]
+  whatsappLocation?: string
+  whatsappMessage?: string
+}
+
+export default function CommercialHeader({
+  home = false,
+  items,
+  whatsappLocation,
+  whatsappMessage,
+}: CommercialHeaderProps) {
   const [open, setOpen] = useState(false)
+  const navigation = items ?? (home ? HOME_NAVIGATION : DEFAULT_NAVIGATION)
   useEffect(() => {
     if (!open) return
     const close = (event: KeyboardEvent) => {
@@ -39,11 +60,20 @@ export default function CommercialHeader({ home = false }: { home?: boolean }) {
           {open ? <FaTimes aria-hidden="true" /> : <FaBars aria-hidden="true" />}
         </button>
         <div id="site-menu" className={`site-menu ${open ? 'is-open' : ''}`}>
-          {NAVIGATION.map(([label, id]) => (
+          {navigation.map(([label, id]) => (
             <a key={id} href={`${home ? '' : '/'}#${id}`} onClick={() => setOpen(false)}>
               {label}
             </a>
           ))}
+          {whatsappLocation && (
+            <WhatsAppCta
+              className="site-header-whatsapp"
+              location={whatsappLocation}
+              label="WhatsApp"
+              message={whatsappMessage}
+              onClick={() => setOpen(false)}
+            />
+          )}
           <a className="site-professional-link" href="/recrutadores/">
             Perfil profissional ↗
           </a>

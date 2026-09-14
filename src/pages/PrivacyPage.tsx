@@ -71,8 +71,8 @@ export default function PrivacyPage() {
               <p>
                 Com autorização, o site usa o PostHog Cloud US para entender quais páginas e projetos são
                 acessados e quais ações indicam intenção de contato. Podem ser registrados o caminho e tipo de
-                página, a origem da visita e cliques em currículo, WhatsApp, e-mail, LinkedIn, GitHub, NPM,
-                produtos e estudos de caso.
+                página, a origem da visita, parâmetros de campanha quando existirem, interação com a FAQ e
+                cliques em currículo, WhatsApp, e-mail, LinkedIn, GitHub, NPM, produtos e estudos de caso.
               </p>
               <p>
                 O envio bem-sucedido do formulário gera apenas um evento de conclusão. Nome, e-mail, telefone,
@@ -139,10 +139,22 @@ export default function PrivacyPage() {
                 removido da barra de endereço antes do carregamento do analytics.
               </p>
               <p>
-                Somente essa origem é mantida no{' '}
+                Campanhas podem trazer parâmetros{' '}
+                <code className="rounded bg-white/10 px-1.5 py-0.5 text-sm text-inherit">utm_source</code>,{' '}
+                <code className="rounded bg-white/10 px-1.5 py-0.5 text-sm text-inherit">utm_medium</code>,{' '}
+                <code className="rounded bg-white/10 px-1.5 py-0.5 text-sm text-inherit">utm_campaign</code>,{' '}
+                <code className="rounded bg-white/10 px-1.5 py-0.5 text-sm text-inherit">utm_term</code> e{' '}
+                <code className="rounded bg-white/10 px-1.5 py-0.5 text-sm text-inherit">utm_content</code>.
+                Esses valores, quando válidos, permanecem na barra de endereço, ficam no{' '}
                 <code className="rounded bg-white/10 px-1.5 py-0.5 text-sm text-inherit">sessionStorage</code>{' '}
-                e permanece até a aba ser fechada. Outros parâmetros são removidos antes do PostHog ser
-                carregado e apenas âncoras conhecidas do próprio site são preservadas.
+                até a aba ser fechada e podem ser associados aos eventos de página e de contato. Não são
+                capturados textos digitados, e-mails nem o conteúdo da mensagem enviada.
+              </p>
+              <p>
+                A origem da visita e, quando existirem, os parâmetros UTM válidos são mantidos no{' '}
+                <code className="rounded bg-white/10 px-1.5 py-0.5 text-sm text-inherit">sessionStorage</code>{' '}
+                até a aba ser fechada. Os demais parâmetros são removidos antes do PostHog ser carregado e
+                apenas âncoras conhecidas do próprio site são preservadas.
               </p>
             </div>
           </section>

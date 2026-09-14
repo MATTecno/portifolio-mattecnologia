@@ -7,7 +7,7 @@ export default function Rodape() {
           <a className="site-brand" href="/">
             MAT<span>Tecnologia</span>
           </a>
-          <p>Software sob medida. Atendimento direto com Marcelo Diogo.</p>
+          <p>Software sob medida para empresas. Atendimento em Belo Horizonte e região.</p>
           <p className="site-caption">© {new Date().getFullYear()} MATTecnologia</p>
         </div>
         <div className="footer-links">

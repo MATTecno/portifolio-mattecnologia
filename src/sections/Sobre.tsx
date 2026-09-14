@@ -14,8 +14,8 @@ export default function Sobre() {
         <p className="site-eyebrow">Com quem você vai conversar</p>
         <h3>Marcelo Diogo</h3>
         <p>
-          Sou desenvolvedor Full Stack e responsável pela MATTecnologia. O atendimento é direto comigo, desde
-          a conversa sobre a necessidade até as decisões de desenvolvimento.
+          Sou responsável pela MATTecnologia. O atendimento é direto comigo: da conversa sobre a necessidade
+          até o desenvolvimento e os ajustes do sistema.
         </p>
         <a className="site-text-link" href="/recrutadores/">
           Conheça minha experiência ↗
