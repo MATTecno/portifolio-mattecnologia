@@ -35,7 +35,7 @@ A decisão fica no cookie necessário `mat_consent_v1` por até 180 dias, usando
 
 O PostHog usa persistência `localStorage+cookie`, com validade de 180 dias e sem perfis de pessoa ou chamadas a `identify()`. Ao revogar métricas, o site interrompe o replay, faz opt-out, remove cookies e armazenamento local do PostHog, descarta a fila e recarrega a página.
 
-A Google tag `AW-18450021277` é carregada uma única vez, somente após o mesmo consentimento de **Métricas e feedback** e sem DNT. Ela não cria propriedade GA4 nem dispara conversão enquanto não houver um conversion label real. O helper `trackWhatsAppAdsConversion()` é chamado no mesmo `trackContact('whatsapp')` já usado pelos CTAs; sem label, a função não envia evento de conversão. Falha ou bloqueio da tag não impede o clique no WhatsApp.
+A Google tag `AW-18450021277` é carregada uma única vez, somente após o mesmo consentimento de **Métricas e feedback** e sem DNT. Ela não cria propriedade GA4. O helper `trackWhatsAppAdsConversion()` é chamado apenas em `trackContact('whatsapp')`, com `send_to: AW-18450021277/akRVCPnAhfccEJ33091E`. E-mail, LinkedIn e outros eventos não disparam essa conversão. Falha ou bloqueio da tag não impede o clique no WhatsApp.
 
 ## Links de compartilhamento
 

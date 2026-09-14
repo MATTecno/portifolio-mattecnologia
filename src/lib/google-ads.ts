@@ -5,9 +5,9 @@ import {
 
 export const GOOGLE_ADS_ID = 'AW-18450021277'
 export const GOOGLE_ADS_SCRIPT_SRC = `https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`
-
-// Conversion events stay disabled until a real label is provided.
-export const GOOGLE_ADS_CONVERSION_LABEL: string | undefined = undefined
+export const GOOGLE_ADS_CONVERSION_LABEL = 'akRVCPnAhfccEJ33091E'
+export const GOOGLE_ADS_CONVERSION_VALUE = 1.0
+export const GOOGLE_ADS_CONVERSION_CURRENCY = 'BRL'
 
 type GtagFn = (...args: unknown[]) => void
 
@@ -130,7 +130,11 @@ export function trackWhatsAppAdsConversion(): void {
     const gtag = adsWindow()?.gtag
     if (typeof gtag !== 'function') return
 
-    gtag('event', 'conversion', { send_to: sendTo })
+    gtag('event', 'conversion', {
+      send_to: sendTo,
+      value: GOOGLE_ADS_CONVERSION_VALUE,
+      currency: GOOGLE_ADS_CONVERSION_CURRENCY,
+    })
   } catch {
     return
   }

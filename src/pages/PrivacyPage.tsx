@@ -89,9 +89,9 @@ export default function PrivacyPage() {
                 <code className="rounded bg-white/10 px-1.5 py-0.5 text-sm text-inherit">
                   AW-18450021277
                 </code>{' '}
-                para medir campanhas de anúncios. Essa tag não substitui o PostHog, não envia o conteúdo
-                digitado nos formulários e, neste momento, não registra conversões até uma ação específica ser
-                configurada.
+                para medir campanhas de anúncios. Essa tag não substitui o PostHog e não envia o conteúdo
+                digitado nos formulários. Com consentimento, um clique nos canais de WhatsApp do site pode
+                registrar uma conversão da campanha no Google Ads.
               </p>
             </div>
           </section>
