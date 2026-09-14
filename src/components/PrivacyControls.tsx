@@ -251,7 +251,8 @@ export default function PrivacyControls({ theme = 'default' }: PrivacyControlsPr
                 <span>
                   <span className="block font-semibold">Métricas e feedback</span>
                   <span className={`mt-1 block text-sm leading-relaxed ${recruiterTheme ? 'text-slate-600' : 'text-slate-300'}`}>
-                    Mede páginas e ações por meio de um identificador anônimo e habilita o botão opcional de feedback.
+                    Mede páginas e ações por meio de um identificador anônimo, habilita o botão opcional de
+                    feedback e carrega a Google tag das campanhas de anúncio.
                   </span>
                 </span>
                 <input

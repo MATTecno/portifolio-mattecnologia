@@ -5,6 +5,7 @@ import {
   hasCampaign,
   type CampaignParams,
 } from './attribution'
+import { syncGoogleAdsWithConsent, trackWhatsAppAdsConversion } from './google-ads'
 import {
   getConsentPreferences,
   subscribeToConsent,
@@ -416,6 +417,7 @@ export function initAnalytics(pageContext: PageContext): void {
     const wasCollecting = Boolean(currentPreferences?.analytics)
     currentPreferences = preferences
     applyConsent(preferences)
+    syncGoogleAdsWithConsent()
 
     if (wasCollecting && !preferences.analytics) {
       globalThis.setTimeout(() => window.location.reload(), 0)
@@ -423,6 +425,7 @@ export function initAnalytics(pageContext: PageContext): void {
   })
 
   applyConsent(currentPreferences)
+  syncGoogleAdsWithConsent()
 }
 
 export function trackResumeDownload(location: string): void {
@@ -431,6 +434,7 @@ export function trackResumeDownload(location: string): void {
 
 export function trackContact(channel: ContactChannel, location: string): void {
   track('contact_clicked', { channel, location })
+  if (channel === 'whatsapp') trackWhatsAppAdsConversion()
 }
 
 export function trackProfile(platform: ProfilePlatform, location: string): void {
