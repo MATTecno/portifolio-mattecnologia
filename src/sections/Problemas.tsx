@@ -8,17 +8,22 @@ const PROBLEMS = [
   ['Precisa de um sistema específico', 'A operação pede um controle feito sob medida, e não um pacote genérico.'],
 ]
 
-export default function Problemas() {
+export default function Problemas({ variant = 'home' }: { variant?: 'home' | 'landing' }) {
+  const problems = variant === 'landing' ? PROBLEMS : [
+    ['Seus serviços não têm uma página própria', 'Clientes precisam de um lugar para conhecer sua empresa, entender sua oferta e entrar em contato.'],
+    ['A divulgação não explica o que você oferece', 'Uma campanha ou serviço precisa de uma página com informações claras e um caminho para conversar.'],
+    ...PROBLEMS.slice(0, 4),
+  ]
   return (
     <section id="problemas" className="site-section problems-section">
       <div className="site-container">
         <div className="section-heading">
           <p className="site-eyebrow">Situações comuns</p>
           <h2>Seu negócio se identifica com algum desses problemas?</h2>
-          <p>Se alguma dessas situações acontece hoje, um sistema sob medida pode organizar o que já existe.</p>
+          <p>{variant === 'landing' ? 'Se alguma dessas situações acontece hoje, um sistema sob medida pode organizar o que já existe.' : 'Da apresentação dos seus serviços à organização da operação, o projeto começa pela sua necessidade.'}</p>
         </div>
         <div className="problems-grid">
-          {PROBLEMS.map(([title, description]) => (
+          {problems.map(([title, description]) => (
             <article className="problem-card" key={title}>
               <h3>{title}</h3>
               <p>{description}</p>

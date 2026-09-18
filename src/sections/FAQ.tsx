@@ -1,4 +1,4 @@
-import { COMMERCIAL_FAQ, SUPPORTING_FAQ, type FaqItem } from '../data/faq'
+import { HOME_FAQ, SUPPORTING_FAQ, type FaqItem } from '../data/faq'
 import { trackFaqInteraction } from '../lib/analytics'
 
 type FAQProps = {
@@ -6,7 +6,7 @@ type FAQProps = {
 }
 
 export default function FAQ({ items }: FAQProps) {
-  const questions = items ?? [...COMMERCIAL_FAQ, ...SUPPORTING_FAQ]
+  const questions = items ?? [...HOME_FAQ, ...SUPPORTING_FAQ]
   return (
     <section id="perguntas" className="site-section faq-section">
       <div className="site-container faq-layout">

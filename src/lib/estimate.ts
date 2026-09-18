@@ -2,7 +2,8 @@ import { getProjectById } from '../data/projects'
 
 export const PROJECT_OPTIONS = {
   orientacao: 'Não sei / preciso de orientação',
-  site: 'Site ou página de apresentação',
+  landing: 'Landing page',
+  site: 'Site institucional',
   web: 'Sistema web',
   desktop: 'Aplicação desktop',
   mobile: 'Aplicativo mobile',

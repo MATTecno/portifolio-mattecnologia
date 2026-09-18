@@ -62,7 +62,7 @@ export default function ProjectCasePage({ project }: { project: CaseStudyProject
             )}
             <figcaption>
               {project.featured
-                ? 'Captura demonstrativa com dados fictícios.'
+                ? (project.captureCaption ?? 'Captura demonstrativa com dados fictícios.')
                 : 'Projeto privado apresentado pela estrutura técnica, sem telas ou dados internos.'}
             </figcaption>
           </figure>

@@ -1,7 +1,7 @@
 import { PROJECTS, getProjectCasePath, isCaseStudyProject, type Project } from '../data/projects'
 import { getProjectDestination, trackProject } from '../lib/analytics'
 
-const HOME_SELECTED_IDS = ['estoque-desktop', 'brutona', 'convites-saas']
+const HOME_SELECTED_IDS = ['brutona', 'vm-viagens', 'estoque-desktop', 'convites-saas']
 const LANDING_SELECTED_IDS = ['estoque-desktop', 'pdv', 'producao']
 
 function ProjectLinks({ project, location }: { project: Project; location: string }) {
@@ -37,11 +37,11 @@ function ProblemSolution({ project }: { project: Project }) {
   return (
     <div className="project-narrative">
       <div>
-        <p className="site-caption">O problema</p>
+        <p className="site-caption">A necessidade</p>
         <p>{project.problem}</p>
       </div>
       <div>
-        <p className="site-caption">A solução</p>
+        <p className="site-caption">O que foi desenvolvido</p>
         <p>{project.solution}</p>
       </div>
     </div>
@@ -54,7 +54,7 @@ type ProjetosProps = {
 
 export default function Projetos({ variant = 'home' }: ProjetosProps) {
   const selectedIds = variant === 'landing' ? LANDING_SELECTED_IDS : HOME_SELECTED_IDS
-  const selected = selectedIds.map((id) => PROJECTS.find((project) => project.id === id)!)
+  const selected: Project[] = selectedIds.map((id) => PROJECTS.find((project) => project.id === id)!)
   const others =
     variant === 'home' ? PROJECTS.filter((project) => !selectedIds.includes(project.id)) : []
   const location = variant === 'landing' ? 'ads_projects' : 'commercial_projects'
@@ -69,27 +69,14 @@ export default function Projetos({ variant = 'home' }: ProjetosProps) {
       </div>
       <div className="selected-projects">
         {selected.map((project, index) => (
-          <article key={project.id} className={`commercial-project ${index === 0 ? 'project-featured' : ''}`}>
+          <article key={project.id} className={`commercial-project ${variant === 'landing' && index === 0 ? 'project-featured' : ''}`}>
             {project.featured && (
               <figure>
-                {isCaseStudyProject(project) ? (
-                  <a
-                    href={getProjectCasePath(project)}
-                    onClick={() => trackProject(project.id, 'case', imageLocation)}
-                    aria-label={`Conhecer ${project.title}`}
-                  >
-                    <img
-                      src={project.cover.src}
-                      srcSet={project.cover.srcSet}
-                      sizes="(min-width: 1024px) 600px, calc(100vw - 40px)"
-                      width={1280}
-                      height={720}
-                      alt={project.cover.alt}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </a>
-                ) : (
+                <a
+                  href={getProjectCasePath(project)}
+                  onClick={() => trackProject(project.id, 'case', imageLocation)}
+                  aria-label={`Conhecer ${project.title}`}
+                >
                   <img
                     src={project.cover.src}
                     srcSet={project.cover.srcSet}
@@ -100,18 +87,18 @@ export default function Projetos({ variant = 'home' }: ProjetosProps) {
                     loading="lazy"
                     decoding="async"
                   />
-                )}
-                <figcaption>Captura demonstrativa com dados fictícios.</figcaption>
+                </a>
+                <figcaption>{project.captureCaption ?? 'Captura demonstrativa com dados fictícios.'}</figcaption>
               </figure>
             )}
             <div className="project-story">
               <p className="site-eyebrow">
-                {project.category} <span aria-hidden="true">/</span> {project.status}
+                {project.clientWork ? 'Trabalho para cliente · ' : ''}{project.category} <span aria-hidden="true">/</span> {project.status}
               </p>
               <h3>{project.title}</h3>
               <p>{project.summary}</p>
               <ProblemSolution project={project} />
-              {index === 0 && project.featured && (
+              {(project.clientWork || index === 0) && project.featured && (
                 <ul className="project-highlights">
                   {project.highlights.map((item) => (
                     <li key={item}>{item}</li>

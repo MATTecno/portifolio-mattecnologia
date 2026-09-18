@@ -23,11 +23,11 @@ export default function App({ initialReference }: { initialReference?: ProjectRe
       <CommercialHeader home />
       <main id="conteudo">
         <Hero />
-        <Problemas />
+        <Projetos />
         <Servicos />
+        <Problemas />
         <ComoTrabalho ctaLocation="commercial_process" />
         <Diferencial />
-        <Projetos />
         <Estimativa
           value={briefing}
           onChange={setBriefing}

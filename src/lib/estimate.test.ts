@@ -11,6 +11,15 @@ import { captureBrowserAttribution } from './attribution'
 import { vi } from 'vitest'
 
 describe('briefing comercial', () => {
+  it.each(['landing', 'site'] as const)('preserva a oferta %s no resumo e nos canais', (project) => {
+    const briefing = { ...EMPTY_BRIEFING, project, description: 'Apresentar serviços & receber contatos.' }
+    const label = project === 'landing' ? 'Landing page' : 'Site institucional'
+    expect(validateBriefing(briefing)).toBeNull()
+    const message = composeContactMessage('Quero uma proposta.', briefing)
+    expect(message).toContain(`Necessidade: ${label}`)
+    expect(new URL(whatsappLink(message)).searchParams.get('text')).toBe(message)
+    expect(new URL(emailLink(message)).searchParams.get('body')).toBe(message)
+  })
   it('permite orientação sem escolhas técnicas e sem valores automáticos', () => {
     expect(validateBriefing(EMPTY_BRIEFING)).toBeNull()
     const summary = formatBriefing(EMPTY_BRIEFING)

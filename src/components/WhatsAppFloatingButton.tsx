@@ -1,6 +1,6 @@
 import { FaWhatsapp } from 'react-icons/fa'
 import { trackContact } from '../lib/analytics'
-import { WHATSAPP_PROJECT_MESSAGE, whatsappLink } from '../lib/contact'
+import { WHATSAPP_GENERAL_MESSAGE, whatsappLink } from '../lib/contact'
 
 type WhatsAppFloatingButtonProps = {
   location?: string
@@ -9,7 +9,7 @@ type WhatsAppFloatingButtonProps = {
 
 export default function WhatsAppFloatingButton({
   location = 'floating_whatsapp',
-  message = WHATSAPP_PROJECT_MESSAGE,
+  message = WHATSAPP_GENERAL_MESSAGE,
 }: WhatsAppFloatingButtonProps) {
   return (
     <a

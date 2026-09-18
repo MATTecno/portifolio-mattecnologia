@@ -6,7 +6,14 @@ const POINTS = [
   ['Transparência', 'Escopo e possibilidades são alinhados antes de seguir.'],
 ]
 
-export default function Diferencial() {
+export default function Diferencial({ variant = 'home' }: { variant?: 'home' | 'landing' }) {
+  const points = variant === 'landing' ? POINTS : [
+    ['Contato direto', 'Você conversa com quem vai entender a necessidade e desenvolver seu projeto.'],
+    ['Solução adaptada', 'Conteúdo, navegação e funcionalidades definidos de acordo com seu objetivo.'],
+    ...POINTS.slice(2, 3),
+    ['Evolução', 'Novas páginas e funcionalidades podem ser avaliadas conforme a necessidade.'],
+    ...POINTS.slice(4),
+  ]
   return (
     <section id="diferencial" className="site-section diferencial-section">
       <div className="site-container">
@@ -14,12 +21,12 @@ export default function Diferencial() {
           <p className="site-eyebrow">Do primeiro contato ao desenvolvimento</p>
           <h2>Você fala diretamente com quem desenvolve.</h2>
           <p>
-            Sem intermediários e sem soluções genéricas empurradas para a empresa. A conversa começa pelo
-            problema real da operação.
+            Sem intermediários e sem soluções genéricas empurradas para a empresa. A conversa começa pelo{' '}
+            {variant === 'landing' ? 'problema real da operação.' : 'objetivo da sua empresa.'}
           </p>
         </div>
         <div className="diferencial-grid">
-          {POINTS.map(([title, description]) => (
+          {points.map(([title, description]) => (
             <article key={title}>
               <h3>{title}</h3>
               <p>{description}</p>

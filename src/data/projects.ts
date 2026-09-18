@@ -27,6 +27,8 @@ export type CaseStudy = {
 }
 
 type ProjectBase = {
+  clientWork?: boolean
+  captureCaption?: string
   id: string
   title: string
   status: string
@@ -237,6 +239,8 @@ export const PROJECTS = [
   },
   {
     id: 'brutona',
+    clientWork: true,
+    captureCaption: 'Captura do site desenvolvido para a Brutona.',
     title: 'Brutona — Charcutaria Artesanal',
     status: 'Site institucional',
     category: 'Marca e catálogo',
@@ -251,9 +255,9 @@ export const PROJECTS = [
     solution:
       'Um site institucional com narrativa de marca, catálogo filtrável, modal de produto, mídia oficial e CTA direto para pedido no WhatsApp.',
     highlights: [
-      'Home editorial com manifesto, processo, história da fundadora e localização.',
-      'Catálogo com filtros, detalhes em modal, fotos oficiais e produtos destacados.',
-      'SEO, sitemap, Open Graph, acessibilidade e fluxo de pedido via WhatsApp.',
+      'Apresentação da marca, do processo artesanal, da fundadora e da localização.',
+      'Catálogo com filtros, fotos oficiais e detalhes de cada produto.',
+      'Contato para pedidos pelo WhatsApp e preparação para buscas e compartilhamento.',
     ],
     stack: ['Next.js', 'TypeScript', 'React', 'Tailwind CSS', 'Vercel'],
     links: [
@@ -286,6 +290,8 @@ export const PROJECTS = [
   },
   {
     id: 'vm-viagens',
+    clientWork: true,
+    captureCaption: 'Captura do site desenvolvido para a VM Viagens.',
     title: 'VM Viagens — Concierge de viagens',
     status: 'Landing editorial',
     category: 'Turismo',
@@ -300,9 +306,9 @@ export const PROJECTS = [
     solution:
       'Uma landing editorial com destinos compartilháveis, SEO estruturado e planejador guiado que gera mensagens naturais para WhatsApp.',
     highlights: [
-      'Hero editorial, manifesto, destinos, serviços, diferenciais e privacidade.',
-      'Rotas compartilháveis para destinos com metadados sociais próprios.',
-      'Planejador integrado ao WhatsApp para orientar o primeiro atendimento.',
+      'Apresentação da agência, dos serviços, dos destinos e dos diferenciais.',
+      'Páginas de destinos com links próprios para compartilhar.',
+      'Planejador de viagem que organiza as preferências em uma mensagem para WhatsApp.',
     ],
     stack: ['Next.js', 'TypeScript', 'React', 'Tailwind CSS', 'Vercel'],
     links: [

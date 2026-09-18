@@ -1031,3 +1031,53 @@
 #privacy-controls-root.commercial-theme h3 {
   font-size: 16px;
 }
+
+/* The home offers have equal weight; the campaign hero keeps its own layout. */
+.commercial-hero.home-hero {
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: 48px;
+  padding-block: 64px;
+}
+.home-hero h1 {
+  font-size: clamp(2.25rem, 3.4vw, 3.1rem);
+}
+.hero-offers {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  margin-top: 32px;
+}
+.hero-offers article {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
+  border-top: 2px solid var(--site-accent);
+  padding-top: 18px;
+  min-width: 0;
+}
+.hero-offers h2 { font-size: 1.2rem; }
+.hero-offers p { font-size: 14px; line-height: 1.6; }
+.hero-offers .site-button { margin-top: auto; padding-inline: 12px; min-height: 68px; }
+.hero-offers .site-button svg { flex-shrink: 0; }
+.hero-client-projects { display: grid; gap: 28px; min-width: 0; }
+.hero-client-projects img { display: block; }
+.hero-client-projects .hero-project figcaption { margin-top: 8px; }
+@media (max-width: 1099px) {
+  .commercial-hero.home-hero { grid-template-columns: minmax(0, 1fr); gap: 36px; }
+  .commercial-hero.home-hero > div { max-width: none; }
+  .hero-client-projects { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 639px) {
+  .commercial-hero.home-hero { padding-block: 40px; }
+  .hero-offers, .hero-client-projects { grid-template-columns: minmax(0, 1fr); }
+  .hero-offers .site-button { min-height: 48px; }
+}
+@media (max-width: 639px) {
+  .commercial-page:not(.ads-landing-page) .whatsapp-float {
+    width: 48px;
+    justify-content: center;
+    padding: 10px;
+  }
+  .commercial-page:not(.ads-landing-page) .whatsapp-float span { display: none; }
+}

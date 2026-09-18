@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f7f6f2"/>
+  <rect width="12" height="630" fill="#2457c5"/>
+  <g font-family="DejaVu Sans, sans-serif">
+    <text x="76" y="99" font-size="32" font-weight="bold" fill="#202522">MAT<tspan fill="#2457c5">Tecnologia</tspan></text>
+    <text x="76" y="148" font-size="19" letter-spacing="3" fill="#59615c">DESENVOLVIMENTO DE SOFTWARE</text>
+    <g font-size="70" font-weight="bold" letter-spacing="-2" fill="#202522">
+      <text x="72" y="268">Sistemas sob medida</text>
+      <text x="72" y="352">para sua empresa.</text>
+    </g>
+    <g font-size="25" fill="#59615c">
+      <text x="76" y="420">Transforme planilhas e processos manuais</text>
+      <text x="76" y="458">em um sistema feito para sua operação.</text>
+    </g>
+    <path d="M76 514H1124" stroke="#daddd6" stroke-width="2"/>
+    <text x="76" y="565" font-size="21" fill="#202522">Direto com quem desenvolve.</text>
+    <text x="1124" y="565" text-anchor="end" font-size="21" fill="#2457c5">mattecnologia.dev.br</text>
+  </g>
+</svg>

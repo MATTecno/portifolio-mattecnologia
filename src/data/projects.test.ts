@@ -3,11 +3,21 @@ import {
   CASE_STUDY_PROJECTS,
   FEATURED_PROJECTS,
   PROJECTS,
+  getProjectById,
   getProjectBySlug,
   getProjectCasePath,
 } from './projects'
 
 describe('catálogo de projetos', () => {
+  it('identifica apenas os trabalhos confirmados para clientes, com legendas próprias', () => {
+    const clientProjects = PROJECTS.map((project) => getProjectById(project.id)!)
+      .filter((project) => project.clientWork)
+    expect(clientProjects.map((project) => project.id)).toEqual(['brutona', 'vm-viagens'])
+    for (const project of clientProjects) {
+      expect(project.captureCaption).toContain('Captura do site desenvolvido')
+      expect(project.captureCaption).not.toContain('fictícios')
+    }
+  })
   it('mantém identificadores únicos', () => {
     const ids = PROJECTS.map((project) => project.id)
 

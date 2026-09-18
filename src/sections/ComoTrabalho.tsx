@@ -1,5 +1,5 @@
 import WhatsAppCta from '../components/WhatsAppCta'
-import { WHATSAPP_PROJECT_MESSAGE } from '../lib/contact'
+import { WHATSAPP_GENERAL_MESSAGE } from '../lib/contact'
 import Sobre from './Sobre'
 
 const STEPS = [
@@ -11,15 +11,17 @@ const STEPS = [
 ]
 
 type ComoTrabalhoProps = {
+  variant?: 'home' | 'landing'
   showAbout?: boolean
   ctaLocation?: string
   ctaMessage?: string
 }
 
 export default function ComoTrabalho({
+  variant = 'home',
   showAbout = true,
   ctaLocation,
-  ctaMessage = WHATSAPP_PROJECT_MESSAGE,
+  ctaMessage = WHATSAPP_GENERAL_MESSAGE,
 }: ComoTrabalhoProps) {
   return (
     <section id="processo" className="site-section site-container">
@@ -28,7 +30,12 @@ export default function ComoTrabalho({
         <h2>Do primeiro contato à entrega.</h2>
       </div>
       <ol className="process-steps">
-        {STEPS.map(([title, description], index) => (
+        {(variant === 'landing' ? STEPS : [
+          ['Você conta sua necessidade', 'Apresente sua empresa, seus serviços e o que pretende desenvolver.'],
+          ['Entendemos seu objetivo', 'Conversamos sobre o público, o conteúdo e a rotina que o projeto precisa atender.'],
+          ...STEPS.slice(2, 4),
+          ['Desenvolvemos e acompanhamos', 'O projeto é desenvolvido e a publicação ou implantação é acompanhada conforme o combinado.'],
+        ]).map(([title, description], index) => (
           <li key={title}>
             <span className="site-caption">0{index + 1}</span>
             <h3>{title}</h3>

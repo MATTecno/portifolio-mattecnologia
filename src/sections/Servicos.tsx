@@ -21,7 +21,12 @@ const SERVICES = [
   ],
 ]
 
-export default function Servicos() {
+export default function Servicos({ variant = 'home' }: { variant?: 'home' | 'landing' }) {
+  const services = variant === 'landing' ? SERVICES : [
+    ['Landing pages', 'Uma página para apresentar uma oferta, campanha ou serviço e facilitar o contato pelo WhatsApp ou formulário.'],
+    ['Sites institucionais', 'Apresentação da empresa, dos serviços e do catálogo, com navegação adaptada ao celular.'],
+    ...SERVICES,
+  ]
   return (
     <section id="servicos" className="site-section services-section">
       <div className="site-container services-layout">
@@ -34,7 +39,7 @@ export default function Servicos() {
           </p>
         </div>
         <div>
-          {SERVICES.map(([title, description], index) => (
+          {services.map(([title, description], index) => (
             <article className="service-row" key={title}>
               <span className="service-number">0{index + 1}</span>
               <div>

@@ -37,6 +37,13 @@ export const COMMERCIAL_FAQ: FaqItem[] = [
   },
 ]
 
+export const HOME_FAQ: FaqItem[] = [
+  { id: 'landing_site', question: 'Qual a diferença entre landing page e site institucional?', answer: 'A landing page concentra uma oferta, campanha ou serviço em uma página. O site institucional apresenta a empresa e organiza informações sobre seus serviços ou catálogo. A escolha depende do seu objetivo.' },
+  { id: 'contatos_site', question: 'A página pode receber contatos pelo WhatsApp ou formulário?', answer: 'Sim. Podemos incluir chamadas para WhatsApp e formulários conforme o escopo. O conteúdo e o caminho de contato são definidos a partir da necessidade da empresa.' },
+  { id: 'custo_site', question: 'Quanto custa uma landing page, site ou sistema?', answer: 'O orçamento é personalizado. Conteúdo, páginas, funcionalidades e integrações são definidos antes da proposta, que registra valores e prazos. Não há um preço ou prazo único para todos os projetos.' },
+  ...COMMERCIAL_FAQ.filter((item) => item.id !== 'custo' && item.id !== 'conhecimento'),
+]
+
 export const SUPPORTING_FAQ: FaqItem[] = [
   {
     id: 'contratacao',

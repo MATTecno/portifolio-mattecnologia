@@ -1,6 +1,6 @@
 import { FaWhatsapp } from 'react-icons/fa'
 import { trackContact } from '../lib/analytics'
-import { WHATSAPP_PROJECT_MESSAGE, whatsappLink } from '../lib/contact'
+import { WHATSAPP_GENERAL_MESSAGE, whatsappLink } from '../lib/contact'
 
 type WhatsAppCtaProps = {
   location: string
@@ -15,7 +15,7 @@ export default function WhatsAppCta({
   location,
   label,
   className = 'site-button',
-  message = WHATSAPP_PROJECT_MESSAGE,
+  message = WHATSAPP_GENERAL_MESSAGE,
   icon = false,
   onClick,
 }: WhatsAppCtaProps) {

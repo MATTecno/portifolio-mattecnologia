@@ -15,7 +15,7 @@ export default function Sobre() {
         <h3>Marcelo Diogo</h3>
         <p>
           Sou responsável pela MATTecnologia. O atendimento é direto comigo: da conversa sobre a necessidade
-          até o desenvolvimento e os ajustes do sistema.
+          até o desenvolvimento e os ajustes do projeto.
         </p>
         <a className="site-text-link" href="/recrutadores/">
           Conheça minha experiência ↗

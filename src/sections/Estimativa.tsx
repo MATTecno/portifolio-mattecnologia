@@ -74,7 +74,7 @@ export default function Estimativa({ value, onChange, onContinue, reference }: P
             rows={4}
             value={value.description}
             onChange={(e) => update({ ...value, description: e.target.value })}
-            placeholder="Por exemplo: hoje controlo o estoque em planilhas e preciso acompanhar as entradas e saídas."
+            placeholder="Por exemplo: quero apresentar meus serviços e receber contatos pelo WhatsApp, ou organizar o estoque da empresa."
           />
           <fieldset>
             <legend>

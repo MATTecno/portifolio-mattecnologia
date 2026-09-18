@@ -31,20 +31,20 @@ export default function AdsLandingPage() {
       />
       <main id="conteudo">
         <Hero variant="landing" />
-        <Problemas />
-        <Servicos />
-        <ComoTrabalho
+        <Problemas variant="landing" />
+        <Servicos variant="landing" />
+        <ComoTrabalho variant="landing"
           showAbout={false}
           ctaLocation="ads_process"
           ctaMessage={WHATSAPP_ADS_MESSAGE}
         />
         <Projetos variant="landing" />
-        <Diferencial />
+        <Diferencial variant="landing" />
         <div className="site-container landing-about">
           <Sobre />
         </div>
         <FAQ items={COMMERCIAL_FAQ} />
-        <FinalCta location="ads_final_cta" message={WHATSAPP_ADS_MESSAGE} />
+        <FinalCta variant="landing" location="ads_final_cta" message={WHATSAPP_ADS_MESSAGE} />
       </main>
       <Rodape />
       <WhatsAppFloatingButton location="ads_floating" message={WHATSAPP_ADS_MESSAGE} />

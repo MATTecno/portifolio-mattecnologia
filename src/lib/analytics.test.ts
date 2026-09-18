@@ -18,6 +18,13 @@ const page = { pageType: 'recruiter' } as const
 afterEach(() => vi.unstubAllGlobals())
 
 describe('eventos públicos de analytics', () => {
+  it.each(['commercial_hero_landing', 'commercial_hero_system'])(
+    'mantém a origem %s no evento de contato', (location) => {
+      const event = buildAnalyticsEvent('contact_clicked', { channel: 'whatsapp', location },
+        { pageType: 'commercial' }, 'direto', '/')
+      expect(event.properties).toMatchObject({ channel: 'whatsapp', location, page_path: '/' })
+    },
+  )
   it('inicializa o provedor somente após opt-in e com captura manual', () => {
     const config = createPostHogConfig('https://us.i.posthog.com')
 
