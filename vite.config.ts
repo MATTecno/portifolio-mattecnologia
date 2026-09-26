@@ -24,6 +24,7 @@ export default defineConfig({
         projectPos: resolve(import.meta.dirname, 'projetos/pdv/index.html'),
         privacy: resolve(import.meta.dirname, 'privacidade/index.html'),
         adsLanding: resolve(import.meta.dirname, 'sistemas-sob-medida-bh/index.html'),
+        bajaCampaign: resolve(import.meta.dirname, 'baja/index.html'),
       },
     },
   },

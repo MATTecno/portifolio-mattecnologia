@@ -12,10 +12,11 @@ import {
   type ConsentPreferences,
 } from './consent'
 
-export type PageType = 'commercial' | 'recruiter' | 'case' | 'privacy'
+export type PageType = 'commercial' | 'recruiter' | 'case' | 'privacy' | 'baja'
 export type ContactChannel = 'whatsapp' | 'email' | 'linkedin'
 export type ProfilePlatform = 'github'
 export type ProjectDestination = 'case' | 'live' | 'github' | 'npm' | 'demo'
+export type BajaCtaPosition = 'hero' | 'services' | 'mechanic' | 'sticky_mobile' | 'final_cta'
 
 export type PageContext = {
   pageType: PageType
@@ -57,6 +58,14 @@ export type AnalyticsEvent =
         state: 'open' | 'closed'
       }
     }
+  | { name: 'baja_campaign_view'; properties: BaseEventProperties }
+  | {
+      name: 'baja_campaign_whatsapp_click'
+      properties: BaseEventProperties & {
+        origin: BajaCtaPosition
+        position: BajaCtaPosition
+      }
+    }
 
 type EventName = AnalyticsEvent['name']
 type AnalyticsProvider = {
@@ -78,6 +87,8 @@ type EventDetails = {
   briefing_started: { location: string }
   briefing_completed: { location: string }
   faq_interaction: { location: string; question_id: string; state: 'open' | 'closed' }
+  baja_campaign_view: Record<string, never>
+  baja_campaign_whatsapp_click: { origin: BajaCtaPosition; position: BajaCtaPosition }
 }
 
 const PRIVATE_PROVIDER_PROPERTIES = [
@@ -103,6 +114,7 @@ let isUnavailable = false
 let analyticsGranted = false
 let replayGranted = false
 let pageViewTracked = false
+let bajaCampaignViewTracked = false
 let currentPreferences: ConsentPreferences | null = null
 let queue: AnalyticsEvent[] = []
 let replayRuntimePromise: Promise<unknown> | null = null
@@ -355,6 +367,7 @@ function disableAnalytics(projectKey: string | undefined): void {
   analyticsGranted = false
   replayGranted = false
   pageViewTracked = false
+  bajaCampaignViewTracked = false
   queue = []
 
   cancelSessionReplay()
@@ -392,6 +405,11 @@ function applyConsent(preferences: ConsentPreferences | null): void {
   if (!pageViewTracked) {
     pageViewTracked = true
     track('page_viewed', {})
+  }
+
+  if (context?.pageType === 'baja' && !bajaCampaignViewTracked) {
+    bajaCampaignViewTracked = true
+    track('baja_campaign_view', {})
   }
 
   if (posthogClient) {
@@ -436,6 +454,10 @@ export function trackResumeDownload(location: string): void {
 export function trackContact(channel: ContactChannel, location: string): void {
   track('contact_clicked', { channel, location })
   if (channel === 'whatsapp') trackWhatsAppAdsConversion()
+}
+
+export function trackBajaWhatsappClick(position: BajaCtaPosition): void {
+  track('baja_campaign_whatsapp_click', { origin: position, position })
 }
 
 export function trackProfile(platform: ProfilePlatform, location: string): void {

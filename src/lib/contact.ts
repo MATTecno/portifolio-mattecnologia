@@ -8,6 +8,8 @@ export const WHATSAPP_PROJECT_MESSAGE =
   'Olá! Gostaria de conversar sobre um sistema para minha empresa.'
 export const WHATSAPP_ADS_MESSAGE =
   'Olá! Encontrei a MATTecnologia pelo Google e gostaria de conversar sobre um sistema para minha empresa.'
+export const WHATSAPP_BAJA_MESSAGE =
+  'Olá! Vim pelo QR Code do Baja e queria conversar sobre um sistema para minha empresa.'
 export const whatsappLink = (message: string) =>
   `https://wa.me/${OWNER_WHATSAPP}?text=${encodeURIComponent(message)}`
 export const emailLink = (message: string) =>

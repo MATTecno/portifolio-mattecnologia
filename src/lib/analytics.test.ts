@@ -199,6 +199,47 @@ describe('eventos públicos de analytics', () => {
       question_id: 'custo',
       state: 'open',
     })
+
+    expect(buildAnalyticsEvent(
+      'baja_campaign_whatsapp_click',
+      { origin: 'hero', position: 'hero' },
+      { pageType: 'baja' },
+      'baja',
+      '/baja/',
+      {
+        utm_source: 'baja',
+        utm_medium: 'offline',
+        utm_campaign: 'evento_baja',
+        utm_content: 'mecanico_vidro',
+      },
+    ).properties).toEqual({
+      page_path: '/baja/',
+      page_type: 'baja',
+      source: 'baja',
+      origin: 'hero',
+      position: 'hero',
+      utm_source: 'baja',
+      utm_medium: 'offline',
+      utm_campaign: 'evento_baja',
+      utm_content: 'mecanico_vidro',
+    })
+
+    expect(buildAnalyticsEvent(
+      'baja_campaign_view',
+      {},
+      { pageType: 'baja' },
+      'baja',
+      '/baja/',
+      { utm_content: 'pagar_mecanico' },
+    )).toEqual({
+      name: 'baja_campaign_view',
+      properties: {
+        page_path: '/baja/',
+        page_type: 'baja',
+        source: 'baja',
+        utm_content: 'pagar_mecanico',
+      },
+    })
   })
 
   it('não inclui query string, hash nem dados pessoais nas propriedades construídas', () => {

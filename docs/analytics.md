@@ -47,6 +47,8 @@ A origem explícita mais recente vale durante a aba atual. `origem` é consumido
 
 Tráfego de Google Ads deve usar a landing `/sistemas-sob-medida-bh/?utm_source=google&utm_medium=cpc&utm_campaign=sistemas_bh`. `utm_source` vira o `source` da sessão quando não há `origem`. A conversão de WhatsApp continua no evento existente `contact_clicked` (`channel: whatsapp`). Visualização de case continua em `project_clicked`. A abertura da landing é o `page_viewed` com `page_path: /sistemas-sob-medida-bh/`. Não crie eventos paralelos com os mesmos significados.
 
+A campanha presencial usa `/baja/` com `utm_source=baja`, `utm_medium=offline` e variações de `utm_content` por QR Code/posição. Sob o mesmo consentimento, a visita gera `page_viewed` e o evento de campanha `baja_campaign_view`; cada CTA de WhatsApp gera `contact_clicked` e `baja_campaign_whatsapp_click`. O evento específico existe para comparar os pontos da landing (`hero`, `services`, `mechanic`, `sticky_mobile`, `final_cta`) sem inferir resultados financeiros. O referrer continua fora das propriedades: a configuração de privacidade do site remove URLs e referrers automáticos do provedor.
+
 ## Eventos
 
 | Evento | Uso | Propriedades adicionais |
@@ -58,10 +60,12 @@ Tráfego de Google Ads deve usar a landing `/sistemas-sob-medida-bh/?utm_source=
 | `project_clicked` | Abertura de case, produto ou repositório | `project_id`, `destination`, `location` |
 | `contact_form_submitted` | EmailJS confirmou o envio | `location` |
 | `faq_interaction` | Abertura ou fechamento de uma pergunta da FAQ | `location`, `question_id`, `state` |
+| `baja_campaign_view` | Visualização consentida da landing presencial | — |
+| `baja_campaign_whatsapp_click` | Clique consentido nos CTAs da campanha Baja | `origin`, `position` |
 
 Todos recebem `page_path`, `page_type` e `source` como contexto próprio. Quando a sessão veio de campanha, também recebem os UTM válidos. Autocapture, pageviews automáticos, heatmaps, performance, erros, dead clicks e rage clicks permanecem desativados. Query strings livres, hashes, valores do formulário e conteúdo do briefing não são adicionados aos eventos.
 
-`location` do WhatsApp identifica o CTA: `commercial_hero`, `ads_hero`, `floating_whatsapp`, `ads_floating`, `commercial_final_cta`, `ads_final_cta`, `commercial_process`, `ads_process`, `ads_header` e os locais já existentes do formulário e do briefing.
+`location` do WhatsApp identifica o CTA: `commercial_hero`, `ads_hero`, `floating_whatsapp`, `ads_floating`, `commercial_final_cta`, `ads_final_cta`, `commercial_process`, `ads_process`, `ads_header`, `baja_hero`, `baja_services`, `baja_mechanic`, `baja_sticky_mobile`, `baja_final_cta` e os locais já existentes do formulário e do briefing.
 
 ## Survey de feedback
 

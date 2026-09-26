@@ -1,5 +1,5 @@
-import { readFile } from 'node:fs/promises'
-import { join } from 'node:path'
+import { mkdir, readFile } from 'node:fs/promises'
+import { dirname, join } from 'node:path'
 import sharp from 'sharp'
 
 const projectRoot = process.cwd()
@@ -14,6 +14,7 @@ async function generateWebpVariants(relativePath, outputBaseName, widths) {
 
   for (const width of widths) {
     const outputPath = join(publicDirectory, `${outputBaseName}-${width}.webp`)
+    await mkdir(dirname(outputPath), { recursive: true })
     await sharp(source)
       .resize({ width, withoutEnlargement: true })
       .webp(webpOptions)
@@ -37,6 +38,8 @@ await sharp(profileSource)
   .resize({ width: 480, height: 480, fit: 'cover', position: 'centre' })
   .webp(webpOptions)
   .toFile(join(publicDirectory, 'marcelo-profissional.webp'))
+
+await generateWebpVariants('campaigns/baja.jpeg', 'baja/baja', [480, 720, 900])
 
 const faviconSource = await readFile(join(sourceDirectory, 'favicon.png'))
 await sharp(faviconSource).resize(32, 32).png({ compressionLevel: 9, palette: true }).toFile(join(publicDirectory, 'favicon-32.png'))
