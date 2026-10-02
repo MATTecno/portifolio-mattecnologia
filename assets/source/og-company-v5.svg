@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">MAT Tecnologia — Tecnologia sob medida.</title>
+  <desc id="desc">Identidade editorial MAT: fundo claro, marca geométrica, tipografia grafite e azul. Sistemas, automações e sites.</desc>
+  <defs>
+    <pattern id="grid" width="56" height="56" patternUnits="userSpaceOnUse">
+      <path d="M56 0H0V56" fill="none" stroke="#d5d6d4" stroke-width="1"/>
+    </pattern>
+    <linearGradient id="fade"><stop stop-color="#fff" stop-opacity=".65"/><stop offset=".3" stop-color="#fff" stop-opacity="0"/><stop offset=".7" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity=".65"/></linearGradient>
+    <mask id="edge-grid"><rect width="1200" height="630" fill="url(#fade)"/></mask>
+  </defs>
+  <rect width="1200" height="630" fill="#f4f3ef"/>
+  <rect width="1200" height="630" fill="url(#grid)" mask="url(#edge-grid)"/>
+  <!-- Edge details remain decorative: all essential content is within the central square. -->
+  <path d="M1120 0H1200V630H1070L1015 485Z" fill="#1b1e22"/>
+  <circle cx="1175" cy="345" r="115" fill="none" stroke="#ffffff20"/>
+  <circle cx="1175" cy="345" r="75" fill="none" stroke="#ffffff20"/>
+  <path d="M0 415H110V355H188" fill="none" stroke="#2457c5" stroke-width="3"/>
+  <circle cx="188" cy="355" r="7" fill="#2457c5"/>
+  <path d="M58 70H98M78 50V90M58 560H98M78 540V580" stroke="#9b9e9f" stroke-width="1.5"/>
+  <g transform="translate(503.670 142) scale(0.078 -0.078)"><path transform="translate(0.0000 0)" fill="#1b1e22" d="M56 0V720H200.771240234375L461.86474609375 408.798583984375L722.26904296875 720H867.7294921875V0H735.038818359375V528.064697265625L461.86474609375 202.53955078125L188.00146484375 527.37548828125V0Z"/><path transform="translate(858.0000 0)" fill="#1b1e22" d="M58 0V580.7021484375Q58 618.8712158203125 76.7568359375 650.6787719726562Q95.513671875 682.486328125 127.32122802734375 701.2431640625Q159.1287841796875 720 197.2978515625 720H638.012939453125Q676.1820068359375 720 707.9895629882812 701.2431640625Q739.797119140625 682.486328125 758.8985595703125 650.6787719726562Q778 618.8712158203125 778 580.7021484375V0H644.6201171875V241.634521484375H190.00146484375V0H58ZM190.00146484375 374.3251953125H644.6201171875V575.1884765625Q644.6201171875 580.1611328125 641.0460205078125 583.7352294921875Q637.471923828125 587.309326171875 632.499267578125 587.309326171875H202.122314453125Q197.149658203125 587.309326171875 193.5755615234375 583.7352294921875Q190.00146484375 580.1611328125 190.00146484375 575.1884765625V374.3251953125Z"/><path transform="translate(1624.0000 0)" fill="#1b1e22" d="M313.81005859375 0V587.309326171875H20V720H740V587.309326171875H446.500732421875V0Z"/><path transform="translate(2313.0000 0)" fill="#2457c5" d="M54 0V130.933837890625H184.933837890625V0Z"/></g>
+  <g font-family="Liberation Sans, Arial, sans-serif" text-anchor="middle">
+    <text x="600" y="188" font-size="16" letter-spacing="4" fill="#61646b">TECNOLOGIA PARA EMPRESAS</text>
+    <g font-size="104" font-weight="700" letter-spacing="-5">
+      <text x="600" y="321" fill="#1b1e22">Tecnologia</text>
+      <text x="600" y="424" fill="#2457c5">sob medida.</text>
+    </g>
+    <text x="600" y="490" font-size="24" fill="#61646b">Sistemas · Automações · Sites</text>
+    <path d="M350 529H850" stroke="#d5d6d4"/>
+    <text x="600" y="570" font-size="22" fill="#2457c5">mattecnologia.dev.br</text>
+  </g>
+</svg>
