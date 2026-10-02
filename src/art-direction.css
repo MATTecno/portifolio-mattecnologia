@@ -28,6 +28,9 @@
 .mat-hero {
   min-height: min(760px, calc(100svh - 100px));
   justify-content: flex-start;
+  /* Transformed layers and their shadows belong to this section only. */
+  overflow: clip;
+  isolation: isolate;
 }
 .mat-hero-grid {
   padding-block: 24px 36px;
@@ -280,8 +283,9 @@
   }
   .mat-hero-art {
     margin-top: 28px;
-    min-height: 290px;
-    height: 290px;
+    /* Reserve the 16:9 image, caption and reveal travel on wider phones. */
+    min-height: max(290px, calc((100vw - 36px) * 9 / 16 + 112px));
+    height: max(290px, calc((100vw - 36px) * 9 / 16 + 112px));
   }
   .mat-hero-art::before {
     inset: 0;
@@ -374,5 +378,7 @@
 @media (min-width: 1100px) {
   .hero-real {
     left: -3%;
+    /* Keep the scaled screenshot and caption above the baseline on wide screens. */
+    max-width: 640px;
   }
 }
