@@ -29,6 +29,8 @@ type BaseEventProperties = {
 } & CampaignParams
 
 export type AnalyticsEvent =
+  | { name: 'project_viewed'; properties: BaseEventProperties & { project_id: string; location: string } }
+  | { name: 'service_interaction'; properties: BaseEventProperties & { service_id: string; state: 'open' | 'closed'; location: string } }
   | { name: 'page_viewed'; properties: BaseEventProperties }
   | { name: 'resume_download_clicked'; properties: BaseEventProperties & { location: string } }
   | {
@@ -78,6 +80,8 @@ type AnalyticsProvider = {
   stopSessionRecording: () => void
 }
 type EventDetails = {
+  project_viewed: { project_id: string; location: string }
+  service_interaction: { service_id: string; state: 'open' | 'closed'; location: string }
   page_viewed: Record<string, never>
   resume_download_clicked: { location: string }
   contact_clicked: { channel: ContactChannel; location: string }
@@ -493,4 +497,12 @@ export function getProjectDestination(href: string): Exclude<ProjectDestination,
     return 'live'
   }
   return 'live'
+}
+
+export function trackProjectView(projectId: string): void {
+  track('project_viewed', { project_id: projectId, location: 'commercial_projects' })
+}
+
+export function trackService(serviceId: string, state: 'open' | 'closed'): void {
+  track('service_interaction', { service_id: serviceId, state, location: 'commercial_services' })
 }

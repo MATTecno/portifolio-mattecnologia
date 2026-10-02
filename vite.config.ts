@@ -14,6 +14,9 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(import.meta.dirname, 'index.html'),
+        projectsIndex: resolve(import.meta.dirname, 'projetos/index.html'),
+        contact: resolve(import.meta.dirname, 'contato/index.html'),
+        projectAPublicitaria: resolve(import.meta.dirname, 'projetos/apublicitaria/index.html'),
         recruiters: resolve(import.meta.dirname, 'recrutadores/index.html'),
         signatureDemo: resolve(import.meta.dirname, 'demos/assinatura/index.html'),
         projectInvites: resolve(import.meta.dirname, 'projetos/convites/index.html'),

@@ -387,6 +387,44 @@ export const PROJECTS = [
       ],
     },
   },
+  {
+    id: 'apublicitaria',
+    title: 'aPublicitária',
+    status: 'Interface desenvolvida · conteúdo em preparação',
+    category: 'Portfólio interativo',
+    summary: 'Portfólio digital com uma experiência tão autoral quanto o trabalho que apresenta.',
+    featured: true,
+    captureCaption: 'Captura real da interface local da aPublicitária. O conteúdo dos trabalhos ainda está em preparação.',
+    cover: projectImage('apublicitaria', 'Interface real do portfólio aPublicitária com fotografia de Lavínia Vieira, tipografia ampla e navegação ameixa e amarela'),
+    problem: 'Apresentar o trabalho de produção de conteúdo mobile de Lavínia Vieira em um portfólio comercial com a personalidade visual da marca.',
+    solution: 'Uma experiência responsiva que reúne apresentação, serviços, espaços de portfólio interativos e caminhos de contato pelo WhatsApp.',
+    highlights: [
+      'Identidade visual própria com fotografias reais e tipografia expressiva.',
+      'Navegação por projetos, apresentação pessoal e serviços.',
+      'Contato contextual pelo WhatsApp a partir da necessidade do visitante.',
+    ],
+    stack: ['React', 'TypeScript', 'Vite', 'CSS'],
+    links: [],
+    caseStudy: {
+      slug: 'apublicitaria',
+      role: 'Desenvolvimento da interface, das interações do portfólio e dos caminhos de contato a partir da identidade visual existente.',
+      contributions: [
+        'Composição responsiva com fotografias e materiais oficiais da marca.',
+        'Implementação de navegação, galerias em modal e apresentação de serviços.',
+        'Integração das chamadas de orçamento com mensagens contextuais para WhatsApp.',
+      ],
+      architecture: [
+        { label: 'React e TypeScript', detail: 'Componentes de apresentação, navegação e interações.' },
+        { label: 'Conteúdo separado da interface', detail: 'Projetos, serviços e dados da marca em arquivos próprios.' },
+        { label: 'WhatsApp', detail: 'Mensagens de contato conforme o serviço de interesse.' },
+      ],
+      decisions: [
+        'Usar a identidade e as fotos reais da marca como centro da experiência.',
+        'Manter os espaços de projetos sem mídia fictícia enquanto os materiais estão em preparação.',
+        'Adaptar movimento e navegação para toque e preferência por movimento reduzido.',
+      ],
+    },
+  },
 ] as const satisfies readonly Project[]
 
 export const FEATURED_PROJECTS = PROJECTS.filter(

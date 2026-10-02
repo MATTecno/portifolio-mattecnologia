@@ -1,52 +1,48 @@
 import type { CaseStudyProject } from '../data/projects'
 import { getProjectDestination, trackProject } from '../lib/analytics'
+import { projectWhatsAppMessage } from '../lib/contact'
 import SignatureDemo from '../components/SignatureDemo'
-import CommercialHeader from '../components/CommercialHeader'
-import Rodape from '../sections/Rodape'
+import MatHeader from '../components/editorial/MatHeader'
+import MatFooter from '../components/editorial/MatFooter'
+import WhatsAppCta from '../components/WhatsAppCta'
 
 export default function ProjectCasePage({ project }: { project: CaseStudyProject }) {
   return (
-    <div className="commercial-theme case-page">
-      <CommercialHeader />
-      <main id="case-content">
-        <section className="case-intro">
-          <div className="site-container">
-            <a href="/#portfolio" className="site-text-link">
-              ← Voltar aos projetos
-            </a>
-            <p className="site-eyebrow">
-              {project.category} · {project.status}
-            </p>
-            <h1>{project.title}</h1>
-            <p className="site-lead">{project.summary}</p>
-            <div className="site-actions">
-              {project.links.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={link.primary ? 'site-button' : 'site-button site-button-secondary'}
-                  onClick={() =>
-                    trackProject(project.id, getProjectDestination(link.href), 'project_case_hero')
-                  }
-                >
-                  {link.label} ↗
-                </a>
-              ))}
-            </div>
+    <div className="commercial-theme mat-page mat-case-page">
+      <MatHeader />
+      <main id="conteudo">
+        <section className="mat-wrap mat-internal-intro" id="case-content">
+          <a href="/projetos/" className="mat-text-link">
+            ← Todos os projetos
+          </a>
+          <p className="mat-label">
+            {project.category} / {project.status}
+          </p>
+          <h1>{project.title}</h1>
+          <p>{project.summary}</p>
+          <div className="mat-case-links">
+            {project.links.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={link.primary ? 'mat-button' : 'mat-text-link'}
+                onClick={() =>
+                  trackProject(project.id, getProjectDestination(link.href), 'project_case_hero')
+                }
+              >
+                {getProjectDestination(link.href) === 'live' ? 'Visitar projeto' : link.label} ↗
+              </a>
+            ))}
           </div>
         </section>
-        <div className="site-container site-section">
-          <figure className="case-visual">
+        <div className="mat-wrap">
+          <figure className="mat-case-figure">
             {project.featured ? (
               <img
-                src={project.cover.src}
-                srcSet={project.cover.srcSet}
-                sizes="(min-width: 1200px) 1180px, calc(100vw - 40px)"
-                width={1280}
-                height={720}
-                alt={project.cover.alt}
+                {...project.cover}
+                sizes="(min-width: 1600px) 1456px, calc(100vw - 80px)"
                 fetchPriority="high"
               />
             ) : (
@@ -62,78 +58,103 @@ export default function ProjectCasePage({ project }: { project: CaseStudyProject
             )}
             <figcaption>
               {project.featured
-                ? (project.captureCaption ?? 'Captura demonstrativa com dados fictícios.')
+                ? project.captureCaption ?? 'Captura demonstrativa com dados fictícios.'
                 : 'Projeto privado apresentado pela estrutura técnica, sem telas ou dados internos.'}
             </figcaption>
           </figure>
-          <div className="case-narrative">
+          {project.id === 'apublicitaria' && (
+            <p className="mat-case-note">
+              A interface apresentada é real. Os materiais dos trabalhos de Lavínia e o endereço
+              público do site ainda estão em preparação.
+            </p>
+          )}
+          <div className="mat-case-summary">
             <section>
-              <p className="site-eyebrow">O problema</p>
-              <h2>O que precisava ser resolvido</h2>
+              <p className="mat-label">01 / contexto</p>
+              <h2>O problema</h2>
               <p>{project.problem}</p>
             </section>
             <section>
-              <p className="site-eyebrow">A solução</p>
-              <h2>O que foi desenvolvido</h2>
+              <p className="mat-label">02 / construção</p>
+              <h2>A solução</h2>
               <p>{project.solution}</p>
             </section>
           </div>
+          {project.featured && (
+            <section className="mat-case-details">
+              <h2>O que a experiência reúne</h2>
+              <ul>
+                {project.highlights.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </section>
+          )}
           {project.id === 'zd-signature-input' && <SignatureDemo location="project_case_demo" />}
-          <section className="case-section" aria-labelledby="participacao-title">
-            <h2 id="participacao-title">Minha participação</h2>
-            <p>{project.caseStudy.role}</p>
-            <ul className="case-list">
-              {project.caseStudy.contributions.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
+          <section className="mat-case-details">
+            <h2 id="participacao-title">Nosso trabalho</h2>
+            <div>
+              <p>{project.caseStudy.role}</p>
+              <ul>
+                {project.caseStudy.contributions.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
           </section>
-          <section className="case-section" aria-labelledby="architecture-title">
-            <h2 id="architecture-title">Como o sistema está organizado</h2>
-            <ul className="case-architecture">
+          <section className="mat-case-details">
+            <h2 id="architecture-title">Como foi organizado</h2>
+            <ul>
               {project.caseStudy.architecture.map((layer) => (
                 <li key={layer.label}>
-                  <h3>{layer.label}</h3>
+                  <strong>{layer.label}</strong>
                   <p>{layer.detail}</p>
                 </li>
               ))}
             </ul>
           </section>
-          <section className="case-section" aria-labelledby="decisions-title">
-            <h2 id="decisions-title">Decisões de desenvolvimento</h2>
-            <ul className="case-list">
+          <section className="mat-case-details">
+            <h2 id="decisions-title">Decisões de projeto</h2>
+            <ul>
               {project.caseStudy.decisions.map((item) => (
                 <li key={item}>{item}</li>
               ))}
             </ul>
           </section>
-          <section className="case-section">
+          <section className="mat-case-details">
             <h2>Tecnologias utilizadas</h2>
-            <div className="case-tags">
+            <div className="mat-case-stack">
               {project.stack.map((item) => (
                 <span key={item}>{item}</span>
               ))}
             </div>
           </section>
         </div>
-        <section className="case-contact">
-          <div className="site-container">
-            <div>
-              <p className="site-eyebrow">Seu projeto</p>
-              <h2>Tem uma necessidade parecida?</h2>
-            </div>
-            <div className="site-actions">
-              <a className="site-button" href={`/?projeto=${encodeURIComponent(project.id)}#contato`}>
-                Quero uma solução parecida
+        <section className="mat-final">
+          <div className="mat-wrap">
+            <p className="mat-label">Seu projeto / próximo passo</p>
+            <h2>Tem uma necessidade parecida?</h2>
+            <div className="mat-actions">
+              <WhatsAppCta
+                className="mat-button"
+                location="project_case_contact"
+                label="Conversar sobre meu projeto ↗"
+                message={projectWhatsAppMessage(project.title)}
+              />
+              <a
+                className="mat-text-link"
+                href={`/contato/?projeto=${encodeURIComponent(project.id)}#contato`}
+              >
+                Enviar um resumo pelo formulário ↗
               </a>
-              <a className="site-text-link" href="/#portfolio">
-                Ver outros projetos
+              <a className="mat-text-link" href="/projetos/">
+                Ver outros projetos ↗
               </a>
             </div>
           </div>
         </section>
       </main>
-      <Rodape />
+      <MatFooter />
     </div>
   )
 }

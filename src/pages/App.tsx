@@ -1,50 +1,40 @@
-import { useState } from 'react'
-import CommercialHeader from '../components/CommercialHeader'
+import { useRef } from 'react'
+import MatHeader from '../components/editorial/MatHeader'
+import MatFooter from '../components/editorial/MatFooter'
 import WhatsAppFloatingButton from '../components/WhatsAppFloatingButton'
-import Hero from '../sections/Hero'
-import Problemas from '../sections/Problemas'
-import Servicos from '../sections/Servicos'
-import Projetos from '../sections/Projetos'
-import Contato from '../sections/Contato'
-import Rodape from '../sections/Rodape'
-import Estimativa from '../sections/Estimativa'
-import ComoTrabalho from '../sections/ComoTrabalho'
-import Diferencial from '../sections/Diferencial'
+import EditorialHero from '../sections/editorial/EditorialHero'
+import EditorialServices from '../sections/editorial/EditorialServices'
+import ChaosStory from '../sections/editorial/ChaosStory'
+import SelectedProjects from '../sections/editorial/SelectedProjects'
+import {
+  EditorialProcess,
+  EditorialAbout,
+  EditorialCta,
+} from '../sections/editorial/EditorialClosing'
 import FAQ from '../sections/FAQ'
-import FinalCta from '../sections/FinalCta'
-import { EMPTY_BRIEFING, type ProjectBriefing, type ProjectReference } from '../lib/estimate'
+import { EDITORIAL_FAQ } from '../data/home'
+import { useEditorialMotion } from '../lib/useEditorialMotion'
+import { WHATSAPP_CONTEXT_MESSAGES } from '../lib/contact'
+import type { ProjectReference } from '../lib/estimate'
 
 export default function App({ initialReference }: { initialReference?: ProjectReference }) {
-  const [briefing, setBriefing] = useState<ProjectBriefing>({ ...EMPTY_BRIEFING, features: [] })
-  const [includeBriefing, setIncludeBriefing] = useState(false)
-  const [reference, setReference] = useState(initialReference)
+  const root = useRef<HTMLDivElement>(null)
+  useEditorialMotion(root)
   return (
-    <div className="commercial-theme commercial-page">
-      <CommercialHeader home />
+    <div className="commercial-theme mat-page" ref={root}>
+      <MatHeader home />
       <main id="conteudo">
-        <Hero />
-        <Projetos />
-        <Servicos />
-        <Problemas />
-        <ComoTrabalho ctaLocation="commercial_process" />
-        <Diferencial />
-        <Estimativa
-          value={briefing}
-          onChange={setBriefing}
-          reference={reference}
-          onContinue={() => setIncludeBriefing(true)}
-        />
-        <FAQ />
-        <FinalCta location="commercial_final_cta" />
-        <Contato
-          briefing={includeBriefing ? briefing : undefined}
-          reference={reference}
-          onRemoveReference={() => setReference(undefined)}
-          onRemoveBriefing={() => setIncludeBriefing(false)}
-        />
+        <EditorialHero />
+        <EditorialServices />
+        <ChaosStory />
+        <SelectedProjects />
+        <EditorialProcess />
+        <EditorialAbout />
+        <EditorialCta reference={initialReference} />
+        <FAQ items={EDITORIAL_FAQ} />
       </main>
-      <Rodape />
-      <WhatsAppFloatingButton />
+      <MatFooter />
+      <WhatsAppFloatingButton message={WHATSAPP_CONTEXT_MESSAGES.hero} />
     </div>
   )
 }

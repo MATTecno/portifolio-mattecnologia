@@ -116,3 +116,30 @@ Referências: [persistência no JavaScript SDK](https://posthog.com/docs/librari
 `briefing_started` registra a primeira interação com o briefing; `briefing_completed` registra a escolha de continuar no formulário ou abrir WhatsApp/e-mail após validação. Ambos usam apenas o contexto público e `location: commercial_briefing`, sob o consentimento existente. Conclusão significa preparar/encaminhar o resumo, não confirmar uma contratação nem o recebimento de mensagem externa.
 
 Inputs e resumos usam `.ph-mask`. Links que contêm mensagens codificadas ficam em áreas `.ph-no-capture`. Descrição, recursos, data desejada e conteúdo do resumo não são propriedades dos eventos. Os cliques efetivos nos canais seguem `contact_clicked` e os envios confirmados pelo EmailJS seguem `contact_form_submitted`.
+
+## Home editorial e cases (02/10/2026)
+
+A reconstrução mantém `contact_clicked` (incluindo `trackWhatsAppAdsConversion`),
+`project_clicked`, `faq_interaction`, eventos do briefing/formulário, pageviews,
+recrutadores e campanha Baja. O briefing e o formulário agora também estão em
+`/contato/`, preservando nomes de eventos e contexto de projeto. Os CTAs de
+WhatsApp continuam passando por `WhatsAppCta`/`trackContact`.
+
+Novos eventos, enviados pelo mesmo pipeline com consentimento e atribuição:
+
+| Evento | Propriedades específicas | Disparo |
+| --- | --- | --- |
+| `project_viewed` | `project_id`, `location= commercial_projects` | Primeira entrada de 45% da seção do projeto na viewport, por montagem |
+| `service_interaction` | `service_id` (`systems`, `automation`, `digital`), `state`, `location= commercial_services` | Abertura/fechamento do accordion por hover, foco ou clique |
+
+Abertura de case continua sendo `project_clicked`, com `destination=case`.
+CTAs contextuais identificam `commercial_hero`, `commercial_header`,
+`commercial_services_*`, `commercial_chaos`, `commercial_final_cta`,
+`commercial_footer`, `project_case_contact`. Visualizações/ações realizadas
+antes de consentir não são retroativamente enviadas. Os eventos não recebem
+mensagens de WhatsApp nem texto livre do visitante.
+
+Teste de navegador usa interceptação de rede externa para verificar a chamada
+`gtag('event', 'conversion', ...)` somente após consentimento e seu bloqueio após
+revogação. Essa verificação não representa entrega em uma conta real de Ads ou
+PostHog e não envia contatos de teste.
